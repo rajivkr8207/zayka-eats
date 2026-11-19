@@ -10,7 +10,7 @@ export function calculateCouponDiscount(coupon, subtotal) {
     throw new Error(`Minimum order amount of ₹${coupon.minOrderAmount} required for this coupon`);
   }
 
-  let discount = 0;
+  let discount;
 
   if (coupon.discountType === 'percentage') {
     discount = (subtotal * coupon.discountValue) / 100;
@@ -102,7 +102,7 @@ export const validateAndCalculateCoupon = async ({
   }
 
   // Calculate discount using core formula
-  let discount = 0;
+  let discount;
   try {
     discount = calculateCouponDiscount(coupon, subtotal);
   } catch (err) {

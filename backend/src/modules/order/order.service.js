@@ -385,7 +385,7 @@ export const updateOrderStatus = async ({ orderId, user, newStatus, note = '' })
   const statusNotificationMap = {
     confirmed: { title: 'Order Confirmed ✅', message: `Restaurant has accepted your order #${order.orderNumber}.`, type: 'order_confirmed' },
     preparing: { title: 'Food is Being Prepared 🍳', message: `The kitchen is preparing order #${order.orderNumber}.`, type: 'order_preparing' },
-    ready: { title: 'Order Ready for Pickup 📦', message: `Order #${order.orderNumber} is packed and ready.`, type: 'order_ready' },
+    ready_for_pickup: { title: 'Order Ready for Pickup 📦', message: `Order #${order.orderNumber} is packed and ready.`, type: 'order_ready' },
     out_for_delivery: { title: 'Out for Delivery 🛵', message: `Your order #${order.orderNumber} is on the way to your doorstep!`, type: 'order_out_for_delivery' },
     delivered: { title: 'Order Delivered! 😋', message: `Order #${order.orderNumber} has been delivered. Enjoy your meal!`, type: 'order_delivered' },
     cancelled: { title: 'Order Cancelled ❌', message: `Your order #${order.orderNumber} was cancelled.`, type: 'order_cancelled' },

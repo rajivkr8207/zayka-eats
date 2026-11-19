@@ -13,8 +13,13 @@ import couponRouter from './modules/coupon/coupon.route.js';
 import reviewRouter from './modules/review/review.route.js';
 import notificationRouter from './modules/notification/notification.route.js';
 import couponRedemptionRouter from './modules/couponredemption/couponredemption.route.js';
+import activityLogRouter from './modules/activityLog/activityLog.route.js';
+import { auditActivity } from './modules/activityLog/activityLog.middleware.js';
 
 const AllRoutes = express.Router();
+
+// Auto-audit all write operations across Zayka Eats API
+AllRoutes.use(auditActivity);
 
 AllRoutes.use('/health', healthRoute);
 AllRoutes.use('/auth', authRouter);
@@ -30,5 +35,6 @@ AllRoutes.use('/coupons', couponRouter);
 AllRoutes.use('/reviews', reviewRouter);
 AllRoutes.use('/notifications', notificationRouter);
 AllRoutes.use('/coupon-redemptions', couponRedemptionRouter);
+AllRoutes.use('/activity-logs', activityLogRouter);
 
 export { AllRoutes };

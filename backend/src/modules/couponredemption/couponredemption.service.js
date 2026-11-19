@@ -22,7 +22,7 @@ export const recordRedemption = async ({
   const cleanCode = code.toUpperCase().trim();
 
   // Find coupon in DB if couponId not provided
-  let couponDoc = null;
+  let couponDoc;
   if (couponId) {
     couponDoc = await Coupon.findById(couponId);
   } else {

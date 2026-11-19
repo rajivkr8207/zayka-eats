@@ -61,7 +61,7 @@ foodCategorySchema.index({ menu: 1, name: 1 }, { unique: true });
 
 foodCategorySchema.pre('save', async function (next) {
   if (this.isModified('name') || !this.slug) {
-    let baseSlug = this.name
+    const baseSlug = this.name
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, '')

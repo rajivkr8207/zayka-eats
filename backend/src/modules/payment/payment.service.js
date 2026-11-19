@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import Payment from './payment.model.js';
 import Order from '../order/order.model.js';
-import Restaurant from '../Restaurant/Restaurant.model.js';
 import Config from '../../config/config.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { ROLES } from '../../constants/roles.js';
@@ -158,7 +157,7 @@ export const initiateOrderPayment = async ({
     razorpayOrderId: gatewayOrder.id,
     amount: order.totalAmount,
     currency: 'INR',
-    keyId: Config.razorpay_key_id || 'rzp_test_TlruG0Y8yY8SnW',
+    keyId: Config.razorpay_key_id,
   };
 };
 

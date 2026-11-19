@@ -333,21 +333,31 @@ export const acceptDeliveryTask = async ({ user, orderId }) => {
     throw new ApiError(400, 'You already have an active ongoing delivery task');
   }
 
-  const order = await Order.findById(orderId);
-  if (!order) {
-    throw new ApiError(404, 'Order not found');
-  }
+  // Atomic lock: assign rider only if no one has claimed the order yet
+  const order = await Order.findOneAndUpdate(
+    {
+      _id: orderId,
+      deliveryPartner: null,
+      orderStatus: { $nin: ['delivered', 'cancelled'] },
+    },
+    {
+      $set: { deliveryPartner: user._id },
+    },
+    { new: true },
+  );
 
-  if (order.deliveryPartner && order.deliveryPartner.toString() !== user._id.toString()) {
+  if (!order) {
+    // Could be: not found, already claimed, or in a terminal status
+    const existing = await Order.findById(orderId).select('deliveryPartner orderStatus');
+    if (!existing) {
+      throw new ApiError(404, 'Order not found');
+    }
+    if (['delivered', 'cancelled'].includes(existing.orderStatus)) {
+      throw new ApiError(400, `Cannot accept an order with status '${existing.orderStatus}'`);
+    }
     throw new ApiError(409, 'This order has already been accepted by another delivery partner');
   }
 
-  if (['delivered', 'cancelled'].includes(order.orderStatus)) {
-    throw new ApiError(400, `Cannot accept an order with status '${order.orderStatus}'`);
-  }
-
-  // Lock task to rider
-  order.deliveryPartner = user._id;
   order.statusHistory.push({
     status: order.orderStatus,
     note: `Delivery partner ${partner.fullName} accepted delivery task`,

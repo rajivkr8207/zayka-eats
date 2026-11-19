@@ -185,7 +185,7 @@ restaurantSchema.index({ name: 'text', cuisineTypes: 'text', city: 'text' });
 
 restaurantSchema.pre('save', async function (next) {
   if (this.isModified('name') || !this.slug) {
-    let baseSlug = this.name
+    const baseSlug = this.name
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, '')

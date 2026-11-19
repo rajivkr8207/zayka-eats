@@ -94,10 +94,15 @@ export const reverseGeocodeCoordinates = async (latitude, longitude) => {
 // CREATE USER ADDRESS (Auto-fetch / Map Pick / Manual)
 // ─────────────────────────────────────────────
 export const createAddress = async ({ user, addressData }) => {
-  let {
+  const {
     fullName,
     phone,
     alternatePhone,
+    addressType = 'home',
+    isDefault,
+  } = addressData;
+
+  let {
     addressLine1,
     addressLine2,
     landmark,
@@ -105,12 +110,9 @@ export const createAddress = async ({ user, addressData }) => {
     state,
     country = 'India',
     pincode,
-    latitude,
-    longitude,
-    coordinates,
-    addressType = 'home',
-    isDefault,
   } = addressData;
+
+  const { latitude, longitude, coordinates } = addressData;
 
   // Fallback to authenticated user's details if missing
   const recipientName = (fullName || user.fullName)?.trim();
@@ -264,8 +266,8 @@ export const updateAddress = async ({ addressId, userId, updateData }) => {
   if (updateData.addressType) updates.addressType = updateData.addressType;
 
   // Handle coordinates update
-  let lat = updateData.latitude !== undefined && updateData.latitude !== null && updateData.latitude !== '' ? Number(updateData.latitude) : null;
-  let lng = updateData.longitude !== undefined && updateData.longitude !== null && updateData.longitude !== '' ? Number(updateData.longitude) : null;
+  const lat = updateData.latitude !== undefined && updateData.latitude !== null && updateData.latitude !== '' ? Number(updateData.latitude) : null;
+  const lng = updateData.longitude !== undefined && updateData.longitude !== null && updateData.longitude !== '' ? Number(updateData.longitude) : null;
 
   if (lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng)) {
     updates.location = {
