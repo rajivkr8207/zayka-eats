@@ -9,6 +9,10 @@ import cartRouter from './modules/cart/cart.route.js';
 import orderRouter from './modules/order/order.route.js';
 import paymentRouter from './modules/payment/payment.route.js';
 import deliveryRouter from './modules/delivery/delivery.route.js';
+import couponRouter from './modules/coupon/coupon.route.js';
+import reviewRouter from './modules/review/review.route.js';
+import notificationRouter from './modules/notification/notification.route.js';
+import couponRedemptionRouter from './modules/couponredemption/couponredemption.route.js';
 
 const AllRoutes = express.Router();
 
@@ -22,5 +26,9 @@ AllRoutes.use('/cart', cartRouter);
 AllRoutes.use('/orders', orderRouter);
 AllRoutes.use('/payments', paymentRouter);
 AllRoutes.use('/delivery', deliveryRouter);
+AllRoutes.use('/coupons', couponRouter);
+AllRoutes.use('/reviews', reviewRouter);
+AllRoutes.use('/notifications', notificationRouter);
+AllRoutes.use('/coupon-redemptions', couponRedemptionRouter);
 
 export { AllRoutes };

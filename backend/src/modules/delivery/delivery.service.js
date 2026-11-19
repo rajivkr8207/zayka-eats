@@ -4,6 +4,7 @@ import User from '../user/user.model.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { ROLES } from '../../constants/roles.js';
 import { UploadImageToImageKit } from '../../services/image.service.js';
+import { sendNotification } from '../notification/notification.service.js';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -359,6 +360,15 @@ export const acceptDeliveryTask = async ({ user, orderId }) => {
   partner.isAvailable = false;
   partner.status = 'on_delivery';
   await partner.save();
+
+  // Notify customer in real-time that delivery partner is assigned
+  sendNotification({
+    recipientId: order.user,
+    title: 'Rider Assigned! 🛵',
+    message: `${partner.fullName} has accepted your order delivery.`,
+    type: 'delivery_assigned',
+    orderId: order._id,
+  }).catch((err) => console.error('Delivery assigned notification failed:', err));
 
   return { order, partner };
 };

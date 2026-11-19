@@ -3,6 +3,9 @@ import Cart from '../cart/cart.model.js';
 import Restaurant from '../Restaurant/Restaurant.model.js';
 import Address from '../adress/adress.model.js';
 import User from '../user/user.model.js';
+import { recordCouponUsage } from '../coupon/coupon.service.js';
+import { recordRedemption, cancelRedemption } from '../couponredemption/couponredemption.service.js';
+import { sendNotification } from '../notification/notification.service.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { ROLES } from '../../constants/roles.js';
 
@@ -135,6 +138,7 @@ export const createOrderFromCart = async ({
   });
 
   // 9. Clear user's cart on order placement
+  const usedCouponCode = cart.couponCode;
   cart.items = [];
   cart.restaurant = null;
   cart.subtotal = 0;
@@ -144,6 +148,43 @@ export const createOrderFromCart = async ({
   cart.totalAmount = 0;
   cart.couponCode = null;
   await cart.save();
+
+  if (usedCouponCode) {
+    recordCouponUsage(usedCouponCode).catch((err) => {
+      console.error('Failed to increment coupon usage count:', err);
+    });
+    if (discount > 0) {
+      recordRedemption({
+        code: usedCouponCode,
+        userId: user._id,
+        orderId: order._id,
+        discountAmount: discount,
+        orderAmount: totalAmount,
+      }).catch((err) => {
+        console.error('Failed to record coupon redemption:', err);
+      });
+    }
+  }
+
+  // Live real-time notification to customer
+  sendNotification({
+    recipientId: user._id,
+    title: 'Order Placed! 🎉',
+    message: `Your order #${order.orderNumber} for ₹${order.totalAmount} has been placed.`,
+    type: 'order_placed',
+    orderId: order._id,
+  }).catch((err) => console.error('Customer notification failed:', err));
+
+  // Live real-time notification to restaurant owner
+  if (restaurant?.owner) {
+    sendNotification({
+      recipientId: restaurant.owner,
+      title: 'New Order Received! 🔔',
+      message: `New order #${order.orderNumber} received for ₹${order.totalAmount}.`,
+      type: 'order_placed',
+      orderId: order._id,
+    }).catch((err) => console.error('Restaurant notification failed:', err));
+  }
 
   return order;
 };
@@ -339,6 +380,27 @@ export const updateOrderStatus = async ({ orderId, user, newStatus, note = '' })
   });
 
   await order.save();
+
+  // Send real-time notification to the customer
+  const statusNotificationMap = {
+    confirmed: { title: 'Order Confirmed ✅', message: `Restaurant has accepted your order #${order.orderNumber}.`, type: 'order_confirmed' },
+    preparing: { title: 'Food is Being Prepared 🍳', message: `The kitchen is preparing order #${order.orderNumber}.`, type: 'order_preparing' },
+    ready: { title: 'Order Ready for Pickup 📦', message: `Order #${order.orderNumber} is packed and ready.`, type: 'order_ready' },
+    out_for_delivery: { title: 'Out for Delivery 🛵', message: `Your order #${order.orderNumber} is on the way to your doorstep!`, type: 'order_out_for_delivery' },
+    delivered: { title: 'Order Delivered! 😋', message: `Order #${order.orderNumber} has been delivered. Enjoy your meal!`, type: 'order_delivered' },
+    cancelled: { title: 'Order Cancelled ❌', message: `Your order #${order.orderNumber} was cancelled.`, type: 'order_cancelled' },
+  };
+
+  if (statusNotificationMap[newStatus]) {
+    sendNotification({
+      recipientId: order.user,
+      title: statusNotificationMap[newStatus].title,
+      message: statusNotificationMap[newStatus].message,
+      type: statusNotificationMap[newStatus].type,
+      orderId: order._id,
+    }).catch((err) => console.error('Status notification failed:', err));
+  }
+
   return order;
 };
 
@@ -428,5 +490,15 @@ export const cancelOrder = async ({ orderId, user, reason = '' }) => {
   });
 
   await order.save();
+
+  // Cancel coupon redemption and rollback coupon usedCount
+  if (order.couponCode) {
+    cancelRedemption({
+      orderId: order._id,
+      reason: order.cancellationReason,
+    }).catch((err) => {
+      console.error('Failed to cancel coupon redemption:', err);
+    });
+  }
   return order;
 };

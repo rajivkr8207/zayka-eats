@@ -113,3 +113,24 @@ export const receiveDeliveryDocuments = (req, res, next) => {
     next();
   });
 };
+
+const reviewUploadArray = upload.array('images', 5);
+
+export const receiveReviewImages = (req, res, next) => {
+  reviewUploadArray(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return next(new ApiError(400, 'Review image file size exceeds the 5MB limit'));
+      }
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return next(new ApiError(400, 'Cannot upload more than 5 images per review'));
+      }
+      return next(new ApiError(400, `Upload error: ${err.message}`));
+    } else if (err) {
+      return next(err);
+    }
+
+    req.reviewFiles = req.files || [];
+    next();
+  });
+};

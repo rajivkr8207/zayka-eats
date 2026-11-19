@@ -1,5 +1,7 @@
 import Cart from './cart.model.js';
 import Restaurant from '../Restaurant/Restaurant.model.js';
+import Coupon from '../coupon/coupon.model.js';
+import { validateAndCalculateCoupon } from '../coupon/coupon.service.js';
 import { ApiError } from '../../utils/ApiError.js';
 
 // ─────────────────────────────────────────────
@@ -33,7 +35,7 @@ export const calculateCartTotals = (cart) => {
   cart.tax = Math.round(cart.subtotal * 0.05 * 100) / 100;
 
   // Coupon discount calculation
-  let discount = 0;
+  let discount = cart.discount || 0;
   if (cart.couponCode) {
     const code = cart.couponCode.toUpperCase().trim();
     if (code === 'WELCOME50') {
@@ -45,13 +47,9 @@ export const calculateCartTotals = (cart) => {
     } else if (code === 'ZAYKA100') {
       // ₹100 off on orders >= ₹400
       discount = cart.subtotal >= 400 ? 100 : 0;
-    } else {
-      // Remove invalid code
-      discount = 0;
-      cart.couponCode = null;
     }
   }
-  cart.discount = discount;
+  cart.discount = Math.min(discount, cart.subtotal);
 
   // Final total amount
   cart.totalAmount = Math.max(
@@ -242,22 +240,36 @@ export const applyCoupon = async ({ userId, couponCode }) => {
   }
 
   const code = couponCode.toUpperCase().trim();
-  const validCoupons = ['WELCOME50', 'FLAT50', 'ZAYKA100'];
+  const dbCoupon = await Coupon.findOne({ code, isDeleted: false });
 
-  if (!validCoupons.includes(code)) {
-    throw new ApiError(400, `Coupon '${code}' is invalid or expired`);
-  }
+  if (dbCoupon) {
+    const validation = await validateAndCalculateCoupon({
+      code,
+      subtotal: cart.subtotal,
+      userId,
+      restaurantId: cart.restaurant,
+    });
+    cart.couponCode = code;
+    cart.discount = validation.discount;
+    calculateCartTotals(cart);
+  } else {
+    const validCoupons = ['WELCOME50', 'FLAT50', 'ZAYKA100'];
 
-  // Minimum order value validation
-  if (code === 'FLAT50' && cart.subtotal < 200) {
-    throw new ApiError(400, "Coupon 'FLAT50' requires a minimum order subtotal of ₹200");
-  }
-  if (code === 'ZAYKA100' && cart.subtotal < 400) {
-    throw new ApiError(400, "Coupon 'ZAYKA100' requires a minimum order subtotal of ₹400");
-  }
+    if (!validCoupons.includes(code)) {
+      throw new ApiError(400, `Coupon '${code}' is invalid or expired`);
+    }
 
-  cart.couponCode = code;
-  calculateCartTotals(cart);
+    // Minimum order value validation
+    if (code === 'FLAT50' && cart.subtotal < 200) {
+      throw new ApiError(400, "Coupon 'FLAT50' requires a minimum order subtotal of ₹200");
+    }
+    if (code === 'ZAYKA100' && cart.subtotal < 400) {
+      throw new ApiError(400, "Coupon 'ZAYKA100' requires a minimum order subtotal of ₹400");
+    }
+
+    cart.couponCode = code;
+    calculateCartTotals(cart);
+  }
   await cart.save();
   await cart.populate('restaurant', 'name slug logo address city isOpen isActive');
 
