@@ -65,3 +65,25 @@ export const receiveImage = (req, res, next) => {
     next();
   });
 };
+
+const restaurantUploadFields = upload.fields([
+  { name: 'logo', maxCount: 1 },
+  { name: 'coverImage', maxCount: 1 },
+]);
+
+export const receiveRestaurantImages = (req, res, next) => {
+  restaurantUploadFields(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return next(new ApiError(400, 'Image file size exceeds the 5MB limit'));
+      }
+      return next(new ApiError(400, `Upload error: ${err.message}`));
+    } else if (err) {
+      return next(err);
+    }
+
+    req.logoFile = req.files?.logo?.[0];
+    req.coverFile = req.files?.coverImage?.[0];
+    next();
+  });
+};

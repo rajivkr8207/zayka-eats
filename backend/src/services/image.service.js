@@ -21,7 +21,7 @@ const getImageKitClient = () => {
 export async function UploadImageToImageKit({
   buffer,
   fileName,
-  folderPath = 'food-delivery/users',
+  folderPath = 'users',
 }) {
   if (!buffer) {
     throw new ApiError(400, 'Image buffer is required for upload');
@@ -37,7 +37,7 @@ export async function UploadImageToImageKit({
   const image = await imageKit.files.upload({
     file: await toFile(buffer),
     fileName: fileName || `image-${Date.now()}.jpg`,
-    folder: folderPath,
+    folder: `/zayka/${folderPath}`,
   });
 
   return image;
