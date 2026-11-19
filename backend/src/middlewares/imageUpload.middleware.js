@@ -10,6 +10,7 @@ const ALLOWED_MIME_TYPES = new Set([
   'image/webp',
   'image/gif',
   'image/jpg',
+  'application/pdf',
 ]);
 
 const fileFilter = (_req, file, cb) => {
@@ -19,7 +20,7 @@ const fileFilter = (_req, file, cb) => {
     cb(
       new ApiError(
         400,
-        `Invalid file type '${file.mimetype}'. Only images (JPEG, PNG, WEBP, GIF) are allowed.`,
+        `Invalid file type '${file.mimetype}'. Only images (JPEG, PNG, WEBP, GIF) and PDF are allowed.`,
       ),
       false,
     );
@@ -50,7 +51,6 @@ export const receiveOptionalImage = (req, res, next) => {
       return next(err);
     }
 
-    // Normalize single file to req.file
     req.file = req.files?.avatar?.[0] || req.files?.image?.[0] || req.file;
     next();
   });
@@ -84,6 +84,32 @@ export const receiveRestaurantImages = (req, res, next) => {
 
     req.logoFile = req.files?.logo?.[0];
     req.coverFile = req.files?.coverImage?.[0];
+    next();
+  });
+};
+
+const deliveryUploadFields = upload.fields([
+  { name: 'profileImage', maxCount: 1 },
+  { name: 'aadhaarDocument', maxCount: 1 },
+  { name: 'drivingLicenseImage', maxCount: 1 },
+  { name: 'vehicleRcImage', maxCount: 1 },
+]);
+
+export const receiveDeliveryDocuments = (req, res, next) => {
+  deliveryUploadFields(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return next(new ApiError(400, 'Document/Image file size exceeds the 5MB limit'));
+      }
+      return next(new ApiError(400, `Upload error: ${err.message}`));
+    } else if (err) {
+      return next(err);
+    }
+
+    req.profileImageFile = req.files?.profileImage?.[0];
+    req.aadhaarFile = req.files?.aadhaarDocument?.[0];
+    req.licenseFile = req.files?.drivingLicenseImage?.[0];
+    req.rcFile = req.files?.vehicleRcImage?.[0];
     next();
   });
 };

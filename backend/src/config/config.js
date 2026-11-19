@@ -24,7 +24,10 @@ const Config = {
 
   frontend_url: process.env.FRONTEND_URL,
   image_kit: process.env.IMAGE_KIT,
-  IMAGE_KIT: process.env.IMAGE_KIT,
+
+  razorpay_key_id: process.env.RAZORPAY_KEY_ID,
+  razorpay_key_secret: process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRT,
+  razorpay_webhook_secret: process.env.RAZORPAY_WEBHOOK_SECRET,
 };
 
 export default Config;
