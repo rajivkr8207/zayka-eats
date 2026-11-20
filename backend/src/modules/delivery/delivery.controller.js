@@ -45,9 +45,7 @@ export const getMyProfileController = asyncHandler(async (req, res) => {
   const deliveryPartner = await getMyDeliveryProfile(req.user._id);
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, { deliveryPartner }, 'Rider profile fetched successfully'),
-    );
+    .json(new ApiResponse(200, { deliveryPartner }, 'Rider profile fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -135,9 +133,7 @@ export const acceptDeliveryTaskController = asyncHandler(async (req, res) => {
     orderId: req.params.orderId,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Delivery task accepted successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Delivery task accepted successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -150,9 +146,7 @@ export const completeDeliveryTaskController = asyncHandler(async (req, res) => {
     paymentReceived: req.body.paymentReceived,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Order delivery marked as completed'));
+  return res.status(200).json(new ApiResponse(200, result, 'Order delivery marked as completed'));
 });
 
 // ─────────────────────────────────────────────

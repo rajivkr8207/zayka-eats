@@ -47,11 +47,7 @@ notificationRouter.get('/unread-count', verifyJWT, getUnreadCountController);
  * @desc    Mark all unread notifications as read
  * @access  Protected
  */
-notificationRouter.patch(
-  '/mark-all-read',
-  verifyJWT,
-  markAllAsReadController,
-);
+notificationRouter.patch('/mark-all-read', verifyJWT, markAllAsReadController);
 
 /**
  * @route   PATCH /api/v1/notifications/:id/read
@@ -70,11 +66,7 @@ notificationRouter.patch(
  * @desc    Delete all read notifications from inbox
  * @access  Protected
  */
-notificationRouter.delete(
-  '/clear-read',
-  verifyJWT,
-  clearReadNotificationsController,
-);
+notificationRouter.delete('/clear-read', verifyJWT, clearReadNotificationsController);
 
 /**
  * @route   DELETE /api/v1/notifications/:id

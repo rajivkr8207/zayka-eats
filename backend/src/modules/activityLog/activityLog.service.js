@@ -70,11 +70,7 @@ export const listActivityLogs = async ({
   const skip = (pageNum - 1) * limitNum;
 
   const [logs, total] = await Promise.all([
-    ActivityLog.find(filter)
-      .sort({ createdAt: -1, _id: -1 })
-      .skip(skip)
-      .limit(limitNum)
-      .lean(),
+    ActivityLog.find(filter).sort({ createdAt: -1, _id: -1 }).skip(skip).limit(limitNum).lean(),
     ActivityLog.countDocuments(filter),
   ]);
 
@@ -100,11 +96,7 @@ export const getUserActivityLogs = async (userId, { page = 1, limit = 20 }) => {
   const filter = { actorId: userId };
 
   const [logs, total] = await Promise.all([
-    ActivityLog.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limitNum)
-      .lean(),
+    ActivityLog.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
     ActivityLog.countDocuments(filter),
   ]);
 

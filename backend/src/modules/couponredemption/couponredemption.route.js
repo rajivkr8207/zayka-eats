@@ -23,11 +23,7 @@ const couponRedemptionRouter = Router();
  * @desc    Get user's past redeemed coupons and total money saved
  * @access  Protected (Authenticated Customer)
  */
-couponRedemptionRouter.get(
-  '/my-redemptions',
-  verifyJWT,
-  getUserRedemptionsController,
-);
+couponRedemptionRouter.get('/my-redemptions', verifyJWT, getUserRedemptionsController);
 
 /**
  * @route   GET /api/v1/coupon-redemptions/analytics

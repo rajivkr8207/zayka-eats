@@ -160,10 +160,7 @@ export const getAvailableCoupons = async ({ restaurantId = null, subtotal = null
   };
 
   if (restaurantId) {
-    filter.$or = [
-      { applicableRestaurants: { $size: 0 } },
-      { applicableRestaurants: restaurantId },
-    ];
+    filter.$or = [{ applicableRestaurants: { $size: 0 } }, { applicableRestaurants: restaurantId }];
   }
 
   if (subtotal != null) {
@@ -171,7 +168,9 @@ export const getAvailableCoupons = async ({ restaurantId = null, subtotal = null
   }
 
   const coupons = await Coupon.find(filter)
-    .select('code name description discountType discountValue maxDiscount minOrderAmount expiryDate applicableRestaurants')
+    .select(
+      'code name description discountType discountValue maxDiscount minOrderAmount expiryDate applicableRestaurants',
+    )
     .sort({ discountValue: -1 })
     .lean();
 
@@ -239,13 +238,7 @@ export const deleteCoupon = async (couponId) => {
 // ─────────────────────────────────────────────
 // LIST COUPONS (Admin)
 // ─────────────────────────────────────────────
-export const listCoupons = async ({
-  page = 1,
-  limit = 20,
-  restaurantId,
-  isActive,
-  search,
-}) => {
+export const listCoupons = async ({ page = 1, limit = 20, restaurantId, isActive, search }) => {
   const filter = { isDeleted: false };
 
   if (isActive !== undefined) {

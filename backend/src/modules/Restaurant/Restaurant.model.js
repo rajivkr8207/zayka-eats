@@ -194,7 +194,9 @@ restaurantSchema.pre('save', async function (next) {
 
     let candidateSlug = baseSlug;
     let count = 1;
-    while (await mongoose.models.Restaurant.findOne({ slug: candidateSlug, _id: { $ne: this._id } })) {
+    while (
+      await mongoose.models.Restaurant.findOne({ slug: candidateSlug, _id: { $ne: this._id } })
+    ) {
       candidateSlug = `${baseSlug}-${count++}`;
     }
     this.slug = candidateSlug;

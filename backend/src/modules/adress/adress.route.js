@@ -26,11 +26,7 @@ const addressRouter = Router();
  * @desc    Reverse geocode coordinates into auto-filled address popup details
  * @access  Public / Authenticated
  */
-addressRouter.get(
-  '/reverse-geocode',
-  reverseGeocodeValidation,
-  reverseGeocodeController,
-);
+addressRouter.get('/reverse-geocode', reverseGeocodeValidation, reverseGeocodeController);
 
 // ─────────────────────────────────────────────
 // PROTECTED ADDRESS MANAGEMENT ROUTES
@@ -41,12 +37,7 @@ addressRouter.get(
  * @desc    Create a new delivery address (supports auto-filling from GPS or map coordinates)
  * @access  Protected
  */
-addressRouter.post(
-  '/',
-  verifyJWT,
-  createAddressValidation,
-  createAddressController,
-);
+addressRouter.post('/', verifyJWT, createAddressValidation, createAddressController);
 
 /**
  * @route   GET /api/v1/addresses
@@ -60,24 +51,14 @@ addressRouter.get('/', verifyJWT, getUserAddressesController);
  * @desc    Get single address details by ID
  * @access  Protected
  */
-addressRouter.get(
-  '/:id',
-  verifyJWT,
-  addressIdParamValidation,
-  getAddressByIdController,
-);
+addressRouter.get('/:id', verifyJWT, addressIdParamValidation, getAddressByIdController);
 
 /**
  * @route   PATCH /api/v1/addresses/:id
  * @desc    Update an existing delivery address
  * @access  Protected
  */
-addressRouter.patch(
-  '/:id',
-  verifyJWT,
-  updateAddressValidation,
-  updateAddressController,
-);
+addressRouter.patch('/:id', verifyJWT, updateAddressValidation, updateAddressController);
 
 /**
  * @route   PATCH /api/v1/addresses/:id/set-default
@@ -96,11 +77,6 @@ addressRouter.patch(
  * @desc    Delete a delivery address
  * @access  Protected
  */
-addressRouter.delete(
-  '/:id',
-  verifyJWT,
-  addressIdParamValidation,
-  deleteAddressController,
-);
+addressRouter.delete('/:id', verifyJWT, addressIdParamValidation, deleteAddressController);
 
 export default addressRouter;

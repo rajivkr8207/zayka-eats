@@ -187,10 +187,7 @@ export const approvalValidation = [
 // GET ALL RESTAURANTS QUERY VALIDATION
 // ─────────────────────────────────────────────
 export const getRestaurantsQueryValidation = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page number must be a positive integer'),
+  query('page').optional().isInt({ min: 1 }).withMessage('Page number must be a positive integer'),
 
   query('limit')
     .optional()

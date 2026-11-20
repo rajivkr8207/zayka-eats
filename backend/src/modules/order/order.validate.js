@@ -63,19 +63,14 @@ export const orderIdParamValidation = [
 // RESTAURANT ORDERS QUERY VALIDATION
 // ─────────────────────────────────────────────
 export const restaurantOrdersQueryValidation = [
-  param('restaurantId')
-    .isMongoId()
-    .withMessage('Valid restaurant ID is required in URL parameter'),
+  param('restaurantId').isMongoId().withMessage('Valid restaurant ID is required in URL parameter'),
 
   query('status')
     .optional()
     .isIn(ORDER_STATUS_ENUM)
     .withMessage(`Status must be one of: ${ORDER_STATUS_ENUM.join(', ')}`),
 
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page must be a positive integer'),
+  query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
 
   query('limit')
     .optional()

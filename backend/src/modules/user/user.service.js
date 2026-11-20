@@ -156,9 +156,7 @@ export const logoutUser = async (id, accessToken) => {
   if (accessToken) {
     try {
       const decoded = jwt.decode(accessToken);
-      const remainingSeconds = decoded?.exp
-        ? decoded.exp - Math.floor(Date.now() / 1000)
-        : 3600;
+      const remainingSeconds = decoded?.exp ? decoded.exp - Math.floor(Date.now() / 1000) : 3600;
       if (remainingSeconds > 0) {
         await setCache(`blacklist:token:${accessToken}`, '1', remainingSeconds);
       }

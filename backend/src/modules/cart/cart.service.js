@@ -99,9 +99,7 @@ export const addItemToCart = async ({
   quantity = 1,
   replaceCart = false,
 }) => {
-  const restaurant = await Restaurant.findById(restaurantId).select(
-    '_id name isOpen isActive',
-  );
+  const restaurant = await Restaurant.findById(restaurantId).select('_id name isOpen isActive');
   if (!restaurant) {
     throw new ApiError(404, 'Restaurant not found');
   }

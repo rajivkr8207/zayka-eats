@@ -25,8 +25,10 @@ export const resolveAddressAndLocation = async ({
   longitude,
   coordinates,
 }) => {
-  let lat = latitude !== undefined && latitude !== null && latitude !== '' ? Number(latitude) : null;
-  let lng = longitude !== undefined && longitude !== null && longitude !== '' ? Number(longitude) : null;
+  let lat =
+    latitude !== undefined && latitude !== null && latitude !== '' ? Number(latitude) : null;
+  let lng =
+    longitude !== undefined && longitude !== null && longitude !== '' ? Number(longitude) : null;
 
   if ((lat === null || lng === null) && Array.isArray(coordinates) && coordinates.length === 2) {
     lng = Number(coordinates[0]);
@@ -109,8 +111,7 @@ export const resolveAddressAndLocation = async ({
     pincode: pincode ? pincode.trim() : '',
     location: {
       type: 'Point',
-      coordinates:
-        lng !== null && lat !== null && !isNaN(lng) && !isNaN(lat) ? [lng, lat] : [0, 0],
+      coordinates: lng !== null && lat !== null && !isNaN(lng) && !isNaN(lat) ? [lng, lat] : [0, 0],
     },
   };
 };
@@ -178,10 +179,7 @@ export const createRestaurant = async ({
     throw new ApiError(400, 'Restaurant address is required');
   }
   if (!resolvedAddress.city) {
-    throw new ApiError(
-      400,
-      'City is required. Please provide city or exact location coordinates',
-    );
+    throw new ApiError(400, 'City is required. Please provide city or exact location coordinates');
   }
 
   // Generate Base Slug for filenames
@@ -251,7 +249,10 @@ export const createRestaurant = async ({
       const parsed = JSON.parse(cuisineTypes);
       parsedCuisines = Array.isArray(parsed) ? parsed : [cuisineTypes.trim()];
     } catch {
-      parsedCuisines = cuisineTypes.split(',').map((c) => c.trim()).filter(Boolean);
+      parsedCuisines = cuisineTypes
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
     }
   }
 
@@ -272,7 +273,10 @@ export const createRestaurant = async ({
       const parsed = JSON.parse(workingDays);
       if (Array.isArray(parsed) && parsed.length > 0) parsedWorkingDays = parsed;
     } catch {
-      parsedWorkingDays = workingDays.split(',').map((d) => d.trim()).filter(Boolean);
+      parsedWorkingDays = workingDays
+        .split(',')
+        .map((d) => d.trim())
+        .filter(Boolean);
     }
   }
 
@@ -579,7 +583,10 @@ export const updateRestaurant = async ({
         const parsed = JSON.parse(updateData.cuisineTypes);
         updates.cuisineTypes = Array.isArray(parsed) ? parsed : [updateData.cuisineTypes.trim()];
       } catch {
-        updates.cuisineTypes = updateData.cuisineTypes.split(',').map((c) => c.trim()).filter(Boolean);
+        updates.cuisineTypes = updateData.cuisineTypes
+          .split(',')
+          .map((c) => c.trim())
+          .filter(Boolean);
       }
     }
   }

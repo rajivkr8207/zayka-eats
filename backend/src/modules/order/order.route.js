@@ -38,12 +38,7 @@ orderRouter.post('/', verifyJWT, createOrderValidation, createOrderController);
  * @desc    Verify online payment gateway callback and confirm order
  * @access  Protected (Customer)
  */
-orderRouter.post(
-  '/verify-payment',
-  verifyJWT,
-  verifyPaymentValidation,
-  verifyPaymentController,
-);
+orderRouter.post('/verify-payment', verifyJWT, verifyPaymentValidation, verifyPaymentController);
 
 /**
  * @route   GET /api/v1/orders/my-orders
@@ -76,12 +71,7 @@ orderRouter.get('/:id', verifyJWT, orderIdParamValidation, getOrderByIdControlle
  * @desc    Update order lifecycle status (Kitchen: preparing/ready; Delivery: picked/out/delivered)
  * @access  Protected (Owner, Rider, or Admin)
  */
-orderRouter.patch(
-  '/:id/status',
-  verifyJWT,
-  updateStatusValidation,
-  updateOrderStatusController,
-);
+orderRouter.patch('/:id/status', verifyJWT, updateStatusValidation, updateOrderStatusController);
 
 /**
  * @route   PATCH /api/v1/orders/:id/assign-rider
@@ -100,11 +90,6 @@ orderRouter.patch(
  * @desc    Cancel an order (Customer if before cooking, Owner/Admin with reason)
  * @access  Protected
  */
-orderRouter.patch(
-  '/:id/cancel',
-  verifyJWT,
-  cancelOrderValidation,
-  cancelOrderController,
-);
+orderRouter.patch('/:id/cancel', verifyJWT, cancelOrderValidation, cancelOrderController);
 
 export default orderRouter;

@@ -22,9 +22,7 @@ export const createMenuController = asyncHandler(async (req, res) => {
     imageMimeType: req.file?.mimetype,
   });
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, { menu }, 'Menu created successfully'));
+  return res.status(201).json(new ApiResponse(201, { menu }, 'Menu created successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -32,9 +30,7 @@ export const createMenuController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getMenusByRestaurantController = asyncHandler(async (req, res) => {
   const menus = await getMenusByRestaurant(req.params.restaurantId, req.query);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { menus }, 'Menus fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, { menus }, 'Menus fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -42,9 +38,7 @@ export const getMenusByRestaurantController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getMenuByIdController = asyncHandler(async (req, res) => {
   const menu = await getMenuById(req.params.id);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, menu, 'Menu details fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, menu, 'Menu details fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -59,30 +53,18 @@ export const updateMenuController = asyncHandler(async (req, res) => {
     imageMimeType: req.file?.mimetype,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { menu }, 'Menu updated successfully'));
+  return res.status(200).json(new ApiResponse(200, { menu }, 'Menu updated successfully'));
 });
 
 // ─────────────────────────────────────────────
 // PATCH /api/v1/menus/:id/status (Protected - Owner or Admin)
 // ─────────────────────────────────────────────
 export const toggleMenuStatusController = asyncHandler(async (req, res) => {
-  const menu = await toggleMenuStatus(
-    req.params.id,
-    req.user,
-    req.body.isActive,
-  );
+  const menu = await toggleMenuStatus(req.params.id, req.user, req.body.isActive);
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { menu },
-        `Menu is now ${menu.isActive ? 'Active' : 'Inactive'}`,
-      ),
-    );
+    .json(new ApiResponse(200, { menu }, `Menu is now ${menu.isActive ? 'Active' : 'Inactive'}`));
 });
 
 // ─────────────────────────────────────────────

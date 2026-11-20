@@ -10,13 +10,7 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 // ─────────────────────────────────────────────
 // CREATE MENU
 // ─────────────────────────────────────────────
-export const createMenu = async ({
-  user,
-  restaurantId,
-  menuData,
-  imageBuffer,
-  imageMimeType,
-}) => {
+export const createMenu = async ({ user, restaurantId, menuData, imageBuffer, imageMimeType }) => {
   const restaurant = await Restaurant.findById(restaurantId);
   if (!restaurant) {
     throw new ApiError(404, 'Restaurant not found');
@@ -96,7 +90,10 @@ export const getMenusByRestaurant = async (restaurantId, queryParams = {}) => {
 // GET SINGLE MENU BY ID
 // ─────────────────────────────────────────────
 export const getMenuById = async (menuId) => {
-  const menu = await Menu.findById(menuId).populate('restaurant', 'name slug owner isOpen isActive');
+  const menu = await Menu.findById(menuId).populate(
+    'restaurant',
+    'name slug owner isOpen isActive',
+  );
   if (!menu) {
     throw new ApiError(404, 'Menu not found');
   }
@@ -106,13 +103,7 @@ export const getMenuById = async (menuId) => {
 // ─────────────────────────────────────────────
 // UPDATE MENU
 // ─────────────────────────────────────────────
-export const updateMenu = async ({
-  menuId,
-  user,
-  updateData,
-  imageBuffer,
-  imageMimeType,
-}) => {
+export const updateMenu = async ({ menuId, user, updateData, imageBuffer, imageMimeType }) => {
   const menu = await Menu.findById(menuId);
   if (!menu) {
     throw new ApiError(404, 'Menu not found');

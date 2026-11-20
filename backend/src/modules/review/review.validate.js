@@ -52,9 +52,7 @@ export const createReviewValidation = [
 // UPDATE REVIEW VALIDATION
 // ─────────────────────────────────────────────
 export const updateReviewValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid review ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid review ID is required in URL parameter'),
 
   body('rating')
     .optional()
@@ -74,9 +72,7 @@ export const updateReviewValidation = [
 // REPORT REVIEW VALIDATION
 // ─────────────────────────────────────────────
 export const reportReviewValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid review ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid review ID is required in URL parameter'),
 
   body('reason')
     .trim()
@@ -92,9 +88,7 @@ export const reportReviewValidation = [
 // MODERATE REVIEW VALIDATION (Admin)
 // ─────────────────────────────────────────────
 export const moderateReviewValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid review ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid review ID is required in URL parameter'),
 
   body('isVisible')
     .notEmpty()
@@ -109,16 +103,12 @@ export const moderateReviewValidation = [
 // PARAMETER & QUERY VALIDATIONS
 // ─────────────────────────────────────────────
 export const reviewIdParamValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid review ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid review ID is required in URL parameter'),
   validate,
 ];
 
 export const restaurantReviewsQueryValidation = [
-  param('restaurantId')
-    .isMongoId()
-    .withMessage('Valid restaurant ID is required in URL parameter'),
+  param('restaurantId').isMongoId().withMessage('Valid restaurant ID is required in URL parameter'),
 
   query('rating')
     .optional()
@@ -136,9 +126,7 @@ export const deliveryReviewsQueryValidation = [
     .isMongoId()
     .withMessage('Valid delivery partner ID is required in URL parameter'),
 
-  query('rating')
-    .optional()
-    .isInt({ min: 1, max: 5 }),
+  query('rating').optional().isInt({ min: 1, max: 5 }),
 
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 50 }),

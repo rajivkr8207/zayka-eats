@@ -19,9 +19,7 @@ export const initiatePaymentController = asyncHandler(async (req, res) => {
     paymentMethod: req.body.paymentMethod,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Payment initiated successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Payment initiated successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -36,9 +34,7 @@ export const verifyPaymentController = asyncHandler(async (req, res) => {
     razorpaySignature: req.body.razorpaySignature,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Payment verified successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Payment verified successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -57,9 +53,7 @@ export const webhookController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getPaymentByOrderController = asyncHandler(async (req, res) => {
   const payment = await getPaymentByOrderId(req.params.orderId, req.user);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, payment, 'Payment record fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, payment, 'Payment record fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -83,7 +77,5 @@ export const processRefundController = asyncHandler(async (req, res) => {
     amount: req.body.amount,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Refund processed successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Refund processed successfully'));
 });

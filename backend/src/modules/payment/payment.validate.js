@@ -29,20 +29,11 @@ export const verifyPaymentValidation = [
     .isMongoId()
     .withMessage('A valid order ID is required'),
 
-  body('razorpayOrderId')
-    .trim()
-    .notEmpty()
-    .withMessage('Razorpay order ID is required'),
+  body('razorpayOrderId').trim().notEmpty().withMessage('Razorpay order ID is required'),
 
-  body('razorpayPaymentId')
-    .trim()
-    .notEmpty()
-    .withMessage('Razorpay payment ID is required'),
+  body('razorpayPaymentId').trim().notEmpty().withMessage('Razorpay payment ID is required'),
 
-  body('razorpaySignature')
-    .trim()
-    .notEmpty()
-    .withMessage('Razorpay signature is required'),
+  body('razorpaySignature').trim().notEmpty().withMessage('Razorpay signature is required'),
 
   validate,
 ];
@@ -65,10 +56,7 @@ export const refundValidation = [
     .isMongoId()
     .withMessage('A valid order ID is required'),
 
-  body('amount')
-    .optional()
-    .isFloat({ min: 1 })
-    .withMessage('Refund amount must be greater than 0'),
+  body('amount').optional().isFloat({ min: 1 }).withMessage('Refund amount must be greater than 0'),
 
   body('refundReason')
     .optional()

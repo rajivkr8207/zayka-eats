@@ -22,9 +22,7 @@ export const createReviewController = asyncHandler(async (req, res) => {
     imageFiles: req.reviewFiles || [],
   });
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, { review }, 'Review submitted successfully'));
+  return res.status(201).json(new ApiResponse(201, { review }, 'Review submitted successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -69,9 +67,7 @@ export const getUserReviewsController = asyncHandler(async (req, res) => {
     limit: req.query.limit,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Your reviews fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Your reviews fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -84,9 +80,7 @@ export const updateReviewController = asyncHandler(async (req, res) => {
     updateData: req.body,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { review }, 'Review updated successfully'));
+  return res.status(200).json(new ApiResponse(200, { review }, 'Review updated successfully'));
 });
 
 // ─────────────────────────────────────────────

@@ -29,10 +29,7 @@ export const createMenuValidation = [
     .isInt({ min: 0 })
     .withMessage('Sort order must be a non-negative integer'),
 
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive must be a boolean value'),
+  body('isActive').optional().isBoolean().withMessage('isActive must be a boolean value'),
 
   validate,
 ];
@@ -60,10 +57,7 @@ export const updateMenuValidation = [
     .isInt({ min: 0 })
     .withMessage('Sort order must be a non-negative integer'),
 
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive must be a boolean value'),
+  body('isActive').optional().isBoolean().withMessage('isActive must be a boolean value'),
 
   validate,
 ];
@@ -81,9 +75,6 @@ export const menuIdParamValidation = [
 // ─────────────────────────────────────────────
 export const restaurantIdParamValidation = [
   param('restaurantId').isMongoId().withMessage('Valid restaurant ID is required'),
-  query('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive filter must be true or false'),
+  query('isActive').optional().isBoolean().withMessage('isActive filter must be true or false'),
   validate,
 ];

@@ -29,11 +29,7 @@ const foodCategoryRouter = Router();
  * @desc    Get all categories for a given menu
  * @access  Public
  */
-foodCategoryRouter.get(
-  '/menu/:menuId',
-  menuIdParamValidation,
-  getCategoriesByMenuController,
-);
+foodCategoryRouter.get('/menu/:menuId', menuIdParamValidation, getCategoriesByMenuController);
 
 /**
  * @route   GET /api/v1/food-categories/restaurant/:restaurantId
@@ -51,11 +47,7 @@ foodCategoryRouter.get(
  * @desc    Get single food category by ID
  * @access  Public
  */
-foodCategoryRouter.get(
-  '/:id',
-  foodCategoryIdParamValidation,
-  getFoodCategoryByIdController,
-);
+foodCategoryRouter.get('/:id', foodCategoryIdParamValidation, getFoodCategoryByIdController);
 
 // ─────────────────────────────────────────────
 // PROTECTED ROUTES (Restaurant Owner or Admin)

@@ -33,15 +33,17 @@ export const addItemToCartController = asyncHandler(async (req, res) => {
     replaceCart: req.body.replaceCart,
   });
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      result,
-      result.cartReplaced
-        ? 'Previous restaurant items were replaced. New items added to cart.'
-        : 'Item added to cart successfully',
-    ),
-  );
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        result,
+        result.cartReplaced
+          ? 'Previous restaurant items were replaced. New items added to cart.'
+          : 'Item added to cart successfully',
+      ),
+    );
 });
 
 // ─────────────────────────────────────────────
@@ -54,9 +56,7 @@ export const updateCartItemQuantityController = asyncHandler(async (req, res) =>
     quantity: req.body.quantity,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { cart }, 'Cart item quantity updated'));
+  return res.status(200).json(new ApiResponse(200, { cart }, 'Cart item quantity updated'));
 });
 
 // ─────────────────────────────────────────────
@@ -68,9 +68,7 @@ export const removeCartItemController = asyncHandler(async (req, res) => {
     itemId: req.params.itemId,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { cart }, 'Item removed from cart'));
+  return res.status(200).json(new ApiResponse(200, { cart }, 'Item removed from cart'));
 });
 
 // ─────────────────────────────────────────────
@@ -95,9 +93,7 @@ export const removeCouponController = asyncHandler(async (req, res) => {
     userId: req.user._id,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { cart }, 'Coupon removed from cart'));
+  return res.status(200).json(new ApiResponse(200, { cart }, 'Coupon removed from cart'));
 });
 
 // ─────────────────────────────────────────────

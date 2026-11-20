@@ -57,10 +57,7 @@ export const registerValidation = [
 // LOGIN
 // ─────────────────────────────────────────────
 export const loginValidation = [
-  body('identifier')
-    .trim()
-    .notEmpty()
-    .withMessage('Email, username, or mobile number is required'),
+  body('identifier').trim().notEmpty().withMessage('Email, username, or mobile number is required'),
 
   body('password').notEmpty().withMessage('Password is required'),
 
@@ -99,11 +96,7 @@ export const editProfileValidation = [
     .matches(/^[6-9]\d{9}$/)
     .withMessage('Please enter a valid 10-digit mobile number'),
 
-  body('avatar')
-    .optional()
-    .trim()
-    .isString()
-    .withMessage('Avatar must be a valid string or URL'),
+  body('avatar').optional().trim().isString().withMessage('Avatar must be a valid string or URL'),
 
   validate,
 ];

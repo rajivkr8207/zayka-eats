@@ -84,7 +84,5 @@ export const deleteCouponController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const listCouponsAdminController = asyncHandler(async (req, res) => {
   const result = await listCoupons(req.query);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Coupons list fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Coupons list fetched successfully'));
 });

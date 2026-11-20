@@ -4,7 +4,10 @@ import Restaurant from '../Restaurant/Restaurant.model.js';
 import Address from '../adress/adress.model.js';
 import User from '../user/user.model.js';
 import { recordCouponUsage } from '../coupon/coupon.service.js';
-import { recordRedemption, cancelRedemption } from '../couponredemption/couponredemption.service.js';
+import {
+  recordRedemption,
+  cancelRedemption,
+} from '../couponredemption/couponredemption.service.js';
 import { sendNotification } from '../notification/notification.service.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { ROLES } from '../../constants/roles.js';
@@ -29,9 +32,7 @@ export const createOrderFromCart = async ({
   }
 
   // 2. Validate Restaurant
-  const restaurant = await Restaurant.findById(cart.restaurant).select(
-    '_id name isOpen isActive',
-  );
+  const restaurant = await Restaurant.findById(cart.restaurant).select('_id name isOpen isActive');
   if (!restaurant || !restaurant.isActive) {
     throw new ApiError(400, 'The restaurant is currently inactive or not available.');
   }
@@ -336,10 +337,8 @@ export const updateOrderStatus = async ({ orderId, user, newStatus, note = '' })
   }
 
   const restaurant = await Restaurant.findById(order.restaurant).select('owner');
-  const isRestaurantOwner =
-    restaurant && restaurant.owner.toString() === user._id.toString();
-  const isRider =
-    order.deliveryPartner && order.deliveryPartner.toString() === user._id.toString();
+  const isRestaurantOwner = restaurant && restaurant.owner.toString() === user._id.toString();
+  const isRider = order.deliveryPartner && order.deliveryPartner.toString() === user._id.toString();
   const isAdmin = user.role === ROLES.ADMIN;
 
   // Validate state machine permissions
@@ -349,7 +348,10 @@ export const updateOrderStatus = async ({ orderId, user, newStatus, note = '' })
     }
   } else if (['picked_up', 'out_for_delivery', 'delivered'].includes(newStatus)) {
     if (!isRider && !isAdmin) {
-      throw new ApiError(403, 'Only the assigned delivery partner or admin can update delivery status');
+      throw new ApiError(
+        403,
+        'Only the assigned delivery partner or admin can update delivery status',
+      );
     }
   } else if (!isAdmin) {
     throw new ApiError(403, 'You do not have permission to perform this status update');
@@ -383,12 +385,36 @@ export const updateOrderStatus = async ({ orderId, user, newStatus, note = '' })
 
   // Send real-time notification to the customer
   const statusNotificationMap = {
-    confirmed: { title: 'Order Confirmed ✅', message: `Restaurant has accepted your order #${order.orderNumber}.`, type: 'order_confirmed' },
-    preparing: { title: 'Food is Being Prepared 🍳', message: `The kitchen is preparing order #${order.orderNumber}.`, type: 'order_preparing' },
-    ready_for_pickup: { title: 'Order Ready for Pickup 📦', message: `Order #${order.orderNumber} is packed and ready.`, type: 'order_ready' },
-    out_for_delivery: { title: 'Out for Delivery 🛵', message: `Your order #${order.orderNumber} is on the way to your doorstep!`, type: 'order_out_for_delivery' },
-    delivered: { title: 'Order Delivered! 😋', message: `Order #${order.orderNumber} has been delivered. Enjoy your meal!`, type: 'order_delivered' },
-    cancelled: { title: 'Order Cancelled ❌', message: `Your order #${order.orderNumber} was cancelled.`, type: 'order_cancelled' },
+    confirmed: {
+      title: 'Order Confirmed ✅',
+      message: `Restaurant has accepted your order #${order.orderNumber}.`,
+      type: 'order_confirmed',
+    },
+    preparing: {
+      title: 'Food is Being Prepared 🍳',
+      message: `The kitchen is preparing order #${order.orderNumber}.`,
+      type: 'order_preparing',
+    },
+    ready_for_pickup: {
+      title: 'Order Ready for Pickup 📦',
+      message: `Order #${order.orderNumber} is packed and ready.`,
+      type: 'order_ready',
+    },
+    out_for_delivery: {
+      title: 'Out for Delivery 🛵',
+      message: `Your order #${order.orderNumber} is on the way to your doorstep!`,
+      type: 'order_out_for_delivery',
+    },
+    delivered: {
+      title: 'Order Delivered! 😋',
+      message: `Order #${order.orderNumber} has been delivered. Enjoy your meal!`,
+      type: 'order_delivered',
+    },
+    cancelled: {
+      title: 'Order Cancelled ❌',
+      message: `Your order #${order.orderNumber} was cancelled.`,
+      type: 'order_cancelled',
+    },
   };
 
   if (statusNotificationMap[newStatus]) {
@@ -414,8 +440,7 @@ export const assignDeliveryPartner = async ({ orderId, user, riderId }) => {
   }
 
   const restaurant = await Restaurant.findById(order.restaurant).select('owner');
-  const isRestaurantOwner =
-    restaurant && restaurant.owner.toString() === user._id.toString();
+  const isRestaurantOwner = restaurant && restaurant.owner.toString() === user._id.toString();
   const isAdmin = user.role === ROLES.ADMIN;
 
   if (!isRestaurantOwner && !isAdmin) {
@@ -457,8 +482,7 @@ export const cancelOrder = async ({ orderId, user, reason = '' }) => {
 
   const isCustomer = order.user.toString() === user._id.toString();
   const restaurant = await Restaurant.findById(order.restaurant).select('owner');
-  const isRestaurantOwner =
-    restaurant && restaurant.owner.toString() === user._id.toString();
+  const isRestaurantOwner = restaurant && restaurant.owner.toString() === user._id.toString();
   const isAdmin = user.role === ROLES.ADMIN;
 
   if (!isCustomer && !isRestaurantOwner && !isAdmin) {
@@ -475,7 +499,8 @@ export const cancelOrder = async ({ orderId, user, reason = '' }) => {
 
   order.orderStatus = 'cancelled';
   order.cancelledAt = new Date();
-  order.cancellationReason = reason || (isCustomer ? 'Cancelled by customer' : 'Cancelled by restaurant');
+  order.cancellationReason =
+    reason || (isCustomer ? 'Cancelled by customer' : 'Cancelled by restaurant');
 
   // If online payment was completed, set to refund pending
   if (order.paymentStatus === 'paid') {

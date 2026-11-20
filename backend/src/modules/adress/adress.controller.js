@@ -69,9 +69,7 @@ export const updateAddressController = asyncHandler(async (req, res) => {
     updateData: req.body,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { address }, 'Address updated successfully'));
+  return res.status(200).json(new ApiResponse(200, { address }, 'Address updated successfully'));
 });
 
 // ─────────────────────────────────────────────

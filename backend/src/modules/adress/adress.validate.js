@@ -85,10 +85,7 @@ export const createAddressValidation = [
     .isIn(['home', 'office', 'other'])
     .withMessage("Address type must be 'home', 'office', or 'other'"),
 
-  body('isDefault')
-    .optional()
-    .isBoolean()
-    .withMessage('isDefault must be a boolean value'),
+  body('isDefault').optional().isBoolean().withMessage('isDefault must be a boolean value'),
 
   validate,
 ];
@@ -117,13 +114,9 @@ export const updateAddressValidation = [
     .matches(/^\d{6}$/)
     .withMessage('Pincode must be a 6-digit number'),
 
-  body('latitude')
-    .optional({ checkFalsy: true })
-    .isFloat({ min: -90, max: 90 }),
+  body('latitude').optional({ checkFalsy: true }).isFloat({ min: -90, max: 90 }),
 
-  body('longitude')
-    .optional({ checkFalsy: true })
-    .isFloat({ min: -180, max: 180 }),
+  body('longitude').optional({ checkFalsy: true }).isFloat({ min: -180, max: 180 }),
 
   body('addressType')
     .optional()

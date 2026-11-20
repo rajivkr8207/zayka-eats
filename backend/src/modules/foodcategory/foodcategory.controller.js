@@ -40,10 +40,7 @@ export const getCategoriesByMenuController = asyncHandler(async (req, res) => {
 // GET /api/v1/food-categories/restaurant/:restaurantId (Public)
 // ─────────────────────────────────────────────
 export const getCategoriesByRestaurantController = asyncHandler(async (req, res) => {
-  const categories = await getCategoriesByRestaurant(
-    req.params.restaurantId,
-    req.query,
-  );
+  const categories = await getCategoriesByRestaurant(req.params.restaurantId, req.query);
   return res
     .status(200)
     .json(new ApiResponse(200, { categories }, 'Categories fetched successfully'));
@@ -71,20 +68,14 @@ export const updateFoodCategoryController = asyncHandler(async (req, res) => {
     imageMimeType: req.file?.mimetype,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { category }, 'Category updated successfully'));
+  return res.status(200).json(new ApiResponse(200, { category }, 'Category updated successfully'));
 });
 
 // ─────────────────────────────────────────────
 // PATCH /api/v1/food-categories/:id/status (Protected)
 // ─────────────────────────────────────────────
 export const toggleFoodCategoryStatusController = asyncHandler(async (req, res) => {
-  const category = await toggleFoodCategoryStatus(
-    req.params.id,
-    req.user,
-    req.body.isActive,
-  );
+  const category = await toggleFoodCategoryStatus(req.params.id, req.user, req.body.isActive);
 
   return res
     .status(200)

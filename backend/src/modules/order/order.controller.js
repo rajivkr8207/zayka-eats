@@ -22,9 +22,7 @@ export const createOrderController = asyncHandler(async (req, res) => {
     customerNote: req.body.customerNote,
   });
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, { order }, 'Order placed successfully'));
+  return res.status(201).json(new ApiResponse(201, { order }, 'Order placed successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -47,20 +45,14 @@ export const verifyPaymentController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getCustomerOrdersController = asyncHandler(async (req, res) => {
   const result = await getCustomerOrders(req.user._id, req.query);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Orders fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Orders fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
 // GET /api/v1/orders/restaurant/:restaurantId (Restaurant Orders)
 // ─────────────────────────────────────────────
 export const getRestaurantOrdersController = asyncHandler(async (req, res) => {
-  const result = await getRestaurantOrders(
-    req.params.restaurantId,
-    req.user,
-    req.query,
-  );
+  const result = await getRestaurantOrders(req.params.restaurantId, req.user, req.query);
   return res
     .status(200)
     .json(new ApiResponse(200, result, 'Restaurant orders fetched successfully'));
@@ -71,9 +63,7 @@ export const getRestaurantOrdersController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getOrderByIdController = asyncHandler(async (req, res) => {
   const order = await getOrderById(req.params.id, req.user);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, order, 'Order details fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, order, 'Order details fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -117,7 +107,5 @@ export const cancelOrderController = asyncHandler(async (req, res) => {
     reason: req.body.reason,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { order }, 'Order cancelled successfully'));
+  return res.status(200).json(new ApiResponse(200, { order }, 'Order cancelled successfully'));
 });

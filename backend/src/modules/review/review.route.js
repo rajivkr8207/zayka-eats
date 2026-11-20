@@ -81,36 +81,21 @@ reviewRouter.post(
  * @desc    Edit existing review comment or rating
  * @access  Protected (Review Author)
  */
-reviewRouter.patch(
-  '/:id',
-  verifyJWT,
-  updateReviewValidation,
-  updateReviewController,
-);
+reviewRouter.patch('/:id', verifyJWT, updateReviewValidation, updateReviewController);
 
 /**
  * @route   DELETE /api/v1/reviews/:id
  * @desc    Delete review
  * @access  Protected (Review Author or Admin)
  */
-reviewRouter.delete(
-  '/:id',
-  verifyJWT,
-  reviewIdParamValidation,
-  deleteReviewController,
-);
+reviewRouter.delete('/:id', verifyJWT, reviewIdParamValidation, deleteReviewController);
 
 /**
  * @route   PATCH /api/v1/reviews/:id/report
  * @desc    Flag/report abusive or spam review for moderator review
  * @access  Protected (Authenticated User)
  */
-reviewRouter.patch(
-  '/:id/report',
-  verifyJWT,
-  reportReviewValidation,
-  reportReviewController,
-);
+reviewRouter.patch('/:id/report', verifyJWT, reportReviewValidation, reportReviewController);
 
 // ─────────────────────────────────────────────
 // ADMIN MODERATION ENDPOINTS

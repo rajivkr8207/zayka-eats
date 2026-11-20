@@ -14,9 +14,7 @@ import {
  */
 export const listActivityLogsController = asyncHandler(async (req, res) => {
   const result = await listActivityLogs(req.query);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Activity logs fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Activity logs fetched successfully'));
 });
 
 /**

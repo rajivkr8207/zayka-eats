@@ -52,12 +52,7 @@ export const sendNotification = async ({
 // ─────────────────────────────────────────────
 // GET LOGGED-IN USER NOTIFICATIONS
 // ─────────────────────────────────────────────
-export const getUserNotifications = async ({
-  userId,
-  isRead,
-  page = 1,
-  limit = 20,
-}) => {
+export const getUserNotifications = async ({ userId, isRead, page = 1, limit = 20 }) => {
   const filter = { recipient: userId };
 
   if (isRead !== undefined) {
@@ -190,15 +185,8 @@ export const clearReadNotifications = async (userId) => {
 // ─────────────────────────────────────────────
 // BROADCAST NOTIFICATION (Admin Only)
 // ─────────────────────────────────────────────
-export const broadcastNotification = async ({
-  title,
-  message,
-  type = 'general',
-  data = {},
-}) => {
-  const activeUsers = await User.find({ isActive: true, isBlocked: false })
-    .select('_id')
-    .lean();
+export const broadcastNotification = async ({ title, message, type = 'general', data = {} }) => {
+  const activeUsers = await User.find({ isActive: true, isBlocked: false }).select('_id').lean();
 
   if (!activeUsers.length) {
     return { message: 'No active users found to broadcast to', count: 0 };

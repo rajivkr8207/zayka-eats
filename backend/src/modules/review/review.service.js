@@ -72,15 +72,8 @@ export const recalculateEntityRatings = async ({ restaurantId, deliveryPartnerId
 // CREATE REVIEW
 // ─────────────────────────────────────────────
 export const createReview = async ({ user, reviewData, imageFiles = [] }) => {
-  const {
-    orderId,
-    restaurantId,
-    reviewType,
-    rating,
-    comment,
-    foodId,
-    deliveryPartnerId,
-  } = reviewData;
+  const { orderId, restaurantId, reviewType, rating, comment, foodId, deliveryPartnerId } =
+    reviewData;
 
   // 1. Verify Order exists and belongs to this user
   const order = await Order.findById(orderId);
@@ -112,10 +105,7 @@ export const createReview = async ({ user, reviewData, imageFiles = [] }) => {
     reviewType,
   });
   if (existingReview) {
-    throw new ApiError(
-      409,
-      `You have already submitted a ${reviewType} review for this order`,
-    );
+    throw new ApiError(409, `You have already submitted a ${reviewType} review for this order`);
   }
 
   // 5. Handle delivery partner binding
@@ -178,12 +168,7 @@ export const createReview = async ({ user, reviewData, imageFiles = [] }) => {
 // ─────────────────────────────────────────────
 // GET RESTAURANT REVIEWS & RATING BREAKDOWN
 // ─────────────────────────────────────────────
-export const getRestaurantReviews = async ({
-  restaurantId,
-  rating,
-  page = 1,
-  limit = 10,
-}) => {
+export const getRestaurantReviews = async ({ restaurantId, rating, page = 1, limit = 10 }) => {
   const filter = {
     restaurant: new mongoose.Types.ObjectId(restaurantId),
     reviewType: 'restaurant',
@@ -241,12 +226,7 @@ export const getRestaurantReviews = async ({
 // ─────────────────────────────────────────────
 // GET DELIVERY PARTNER REVIEWS
 // ─────────────────────────────────────────────
-export const getDeliveryPartnerReviews = async ({
-  partnerId,
-  rating,
-  page = 1,
-  limit = 10,
-}) => {
+export const getDeliveryPartnerReviews = async ({ partnerId, rating, page = 1, limit = 10 }) => {
   const filter = {
     deliveryPartner: new mongoose.Types.ObjectId(partnerId),
     reviewType: 'delivery',
@@ -405,12 +385,7 @@ export const moderateReview = async ({ reviewId, isVisible }) => {
 // ─────────────────────────────────────────────
 // LIST ALL REVIEWS (Admin Moderation)
 // ─────────────────────────────────────────────
-export const listReviewsForAdmin = async ({
-  page = 1,
-  limit = 20,
-  isReported,
-  isVisible,
-}) => {
+export const listReviewsForAdmin = async ({ page = 1, limit = 20, isReported, isVisible }) => {
   const filter = {};
 
   if (isReported !== undefined) {

@@ -37,10 +37,7 @@ export const addItemValidation = [
 
   body('image').optional().trim().isString(),
 
-  body('replaceCart')
-    .optional()
-    .isBoolean()
-    .withMessage('replaceCart must be a boolean value'),
+  body('replaceCart').optional().isBoolean().withMessage('replaceCart must be a boolean value'),
 
   validate,
 ];

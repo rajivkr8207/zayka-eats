@@ -24,12 +24,7 @@ const activityLogRouter = Router();
  * @desc    Get activity logs for current logged-in user
  * @access  Protected
  */
-activityLogRouter.get(
-  '/my-logs',
-  verifyJWT,
-  myActivityLogsValidation,
-  getMyActivityLogsController,
-);
+activityLogRouter.get('/my-logs', verifyJWT, myActivityLogsValidation, getMyActivityLogsController);
 
 /**
  * @route   GET /api/v1/activity-logs/stats

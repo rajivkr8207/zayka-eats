@@ -108,11 +108,6 @@ restaurantRouter.patch(
  * @desc    Deactivate restaurant
  * @access  Protected (Owner or Admin)
  */
-restaurantRouter.delete(
-  '/:id',
-  verifyJWT,
-  restaurantIdParamValidation,
-  deleteRestaurantController,
-);
+restaurantRouter.delete('/:id', verifyJWT, restaurantIdParamValidation, deleteRestaurantController);
 
 export default restaurantRouter;

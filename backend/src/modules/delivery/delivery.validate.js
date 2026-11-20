@@ -21,7 +21,9 @@ export const registerPartnerValidation = [
     .notEmpty()
     .withMessage('Vehicle type is required')
     .isIn(['bike', 'scooter', 'cycle', 'electric_bike', 'other'])
-    .withMessage("Vehicle type must be one of: 'bike', 'scooter', 'cycle', 'electric_bike', 'other'"),
+    .withMessage(
+      "Vehicle type must be one of: 'bike', 'scooter', 'cycle', 'electric_bike', 'other'",
+    ),
 
   body('vehicleNumber')
     .optional()

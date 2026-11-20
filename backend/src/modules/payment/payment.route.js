@@ -37,24 +37,14 @@ paymentRouter.post('/webhook', webhookController);
  * @desc    Create/initiate gateway order (Razorpay or COD)
  * @access  Protected (Customer)
  */
-paymentRouter.post(
-  '/initiate',
-  verifyJWT,
-  initiatePaymentValidation,
-  initiatePaymentController,
-);
+paymentRouter.post('/initiate', verifyJWT, initiatePaymentValidation, initiatePaymentController);
 
 /**
  * @route   POST /api/v1/payments/verify
  * @desc    Verify Razorpay payment signature and mark order paid
  * @access  Protected (Customer)
  */
-paymentRouter.post(
-  '/verify',
-  verifyJWT,
-  verifyPaymentValidation,
-  verifyPaymentController,
-);
+paymentRouter.post('/verify', verifyJWT, verifyPaymentValidation, verifyPaymentController);
 
 /**
  * @route   GET /api/v1/payments/order/:orderId
@@ -85,11 +75,6 @@ paymentRouter.get(
  * @desc    Process refund for an order
  * @access  Protected (Admin only)
  */
-paymentRouter.post(
-  '/refund',
-  verifyJWT,
-  refundValidation,
-  processRefundController,
-);
+paymentRouter.post('/refund', verifyJWT, refundValidation, processRefundController);
 
 export default paymentRouter;

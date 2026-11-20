@@ -9,11 +9,7 @@ import logger from '../../config/logger.js';
 // ─────────────────────────────────────────────
 // HELPER: CREATE RAZORPAY GATEWAY ORDER
 // ─────────────────────────────────────────────
-export const createRazorpayOrder = async ({
-  amountInPaise,
-  currency = 'INR',
-  receipt,
-}) => {
+export const createRazorpayOrder = async ({ amountInPaise, currency = 'INR', receipt }) => {
   const keyId = Config.razorpay_key_id;
   const keySecret = Config.razorpay_key_secret;
 
@@ -39,7 +35,10 @@ export const createRazorpayOrder = async ({
       const errData = await response.json();
       logger.warn(`Razorpay API error response: ${JSON.stringify(errData)}`);
       if (Config.env === 'production') {
-        throw new ApiError(502, `Payment gateway error: ${errData?.error?.description || 'Failed to create order'}`);
+        throw new ApiError(
+          502,
+          `Payment gateway error: ${errData?.error?.description || 'Failed to create order'}`,
+        );
       }
     } catch (err) {
       logger.warn(`Razorpay request failed: ${err.message}`);
@@ -81,11 +80,7 @@ export const verifyRazorpaySignature = ({
 // ─────────────────────────────────────────────
 // INITIATE PAYMENT FOR ORDER
 // ─────────────────────────────────────────────
-export const initiateOrderPayment = async ({
-  user,
-  orderId,
-  paymentMethod = 'upi',
-}) => {
+export const initiateOrderPayment = async ({ user, orderId, paymentMethod = 'upi' }) => {
   const order = await Order.findById(orderId);
   if (!order) {
     throw new ApiError(404, 'Order not found');
@@ -255,17 +250,15 @@ export const processWebhook = async ({ rawBody, signature }) => {
   const webhookSecret = Config.razorpay_webhook_secret || Config.razorpay_key_secret;
 
   if (webhookSecret && signature) {
-    const expectedSig = crypto
-      .createHmac('sha256', webhookSecret)
-      .update(rawBody)
-      .digest('hex');
+    const expectedSig = crypto.createHmac('sha256', webhookSecret).update(rawBody).digest('hex');
 
     if (expectedSig !== signature && Config.env === 'production') {
       throw new ApiError(400, 'Invalid webhook signature');
     }
   }
 
-  const payload = typeof rawBody === 'string' ? JSON.parse(rawBody) : JSON.parse(rawBody.toString('utf8'));
+  const payload =
+    typeof rawBody === 'string' ? JSON.parse(rawBody) : JSON.parse(rawBody.toString('utf8'));
   const event = payload.event;
   const paymentEntity = payload.payload?.payment?.entity;
 

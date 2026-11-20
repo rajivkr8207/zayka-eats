@@ -5,10 +5,7 @@ import { validate } from '../../config/validate.js';
 // CREATE NOTIFICATION VALIDATION (Admin / Custom trigger)
 // ─────────────────────────────────────────────
 export const createNotificationValidation = [
-  body('recipientId')
-    .optional()
-    .isMongoId()
-    .withMessage('Valid recipient user ID is required'),
+  body('recipientId').optional().isMongoId().withMessage('Valid recipient user ID is required'),
 
   body('title')
     .notEmpty()
@@ -57,9 +54,7 @@ export const createNotificationValidation = [
 // PARAMETER VALIDATIONS
 // ─────────────────────────────────────────────
 export const notificationIdParamValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid notification ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid notification ID is required in URL parameter'),
   validate,
 ];
 
@@ -67,18 +62,11 @@ export const notificationIdParamValidation = [
 // QUERY VALIDATIONS
 // ─────────────────────────────────────────────
 export const listNotificationsQueryValidation = [
-  query('isRead')
-    .optional()
-    .isBoolean()
-    .withMessage('isRead must be a boolean (true or false)'),
+  query('isRead').optional().isBoolean().withMessage('isRead must be a boolean (true or false)'),
 
-  query('page')
-    .optional()
-    .isInt({ min: 1 }),
+  query('page').optional().isInt({ min: 1 }),
 
-  query('limit')
-    .optional()
-    .isInt({ min: 1, max: 50 }),
+  query('limit').optional().isInt({ min: 1, max: 50 }),
 
   validate,
 ];

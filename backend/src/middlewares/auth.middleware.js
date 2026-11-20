@@ -6,9 +6,7 @@ import User from '../modules/user/user.model.js';
 import { getCache, setCache } from '../utils/cache.js';
 
 export const verifyJWT = asyncHandler(async (req, _res, next) => {
-  const token =
-    req.cookies?.accessToken ||
-    req.header('Authorization')?.replace(/^Bearer\s+/i, '');
+  const token = req.cookies?.accessToken || req.header('Authorization')?.replace(/^Bearer\s+/i, '');
 
   if (!token) {
     throw new ApiError(401, 'Unauthorized request: Access token is missing');
@@ -56,7 +54,10 @@ export const verifyJWT = asyncHandler(async (req, _res, next) => {
 export const authorizeRoles = (...roles) => {
   return (req, _res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
-      throw new ApiError(403, `Access denied: Role '${req.user?.role}' is not authorized to access this resource`);
+      throw new ApiError(
+        403,
+        `Access denied: Role '${req.user?.role}' is not authorized to access this resource`,
+      );
     }
     next();
   };

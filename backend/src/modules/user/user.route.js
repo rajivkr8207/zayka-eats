@@ -103,24 +103,13 @@ authRouter.get('/profile', verifyJWT, getProfile);
  * @desc    Update user profile fields (fullName, username, email, mobile, avatar image <= 5MB)
  * @access  Protected
  */
-authRouter.patch(
-  '/profile',
-  verifyJWT,
-  receiveOptionalImage,
-  editProfileValidation,
-  editProfile,
-);
+authRouter.patch('/profile', verifyJWT, receiveOptionalImage, editProfileValidation, editProfile);
 
 /**
  * @route   PATCH /api/v1/auth/change-password
  * @desc    Change current user password
  * @access  Protected
  */
-authRouter.patch(
-  '/change-password',
-  verifyJWT,
-  changePasswordValidation,
-  changePassword,
-);
+authRouter.patch('/change-password', verifyJWT, changePasswordValidation, changePassword);
 
 export default authRouter;

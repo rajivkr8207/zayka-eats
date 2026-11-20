@@ -62,7 +62,9 @@ const authenticateSocket = async (socket, next) => {
       return next(new Error('Access token has been revoked'));
     }
 
-    const user = await User.findById(decoded.id).select('_id isActive isBlocked role fullName email').lean();
+    const user = await User.findById(decoded.id)
+      .select('_id isActive isBlocked role fullName email')
+      .lean();
     if (!user) {
       return next(new Error('User account does not exist'));
     }
@@ -114,10 +116,7 @@ export const initializeSocket = (httpServer) => {
 
     // Initial sync of unread notifications & recent notifications
     void Promise.all([
-      Notification.find({ recipient: userId })
-        .sort({ createdAt: -1 })
-        .limit(20)
-        .lean(),
+      Notification.find({ recipient: userId }).sort({ createdAt: -1 }).limit(20).lean(),
       Notification.countDocuments({ recipient: userId, isRead: false }),
     ])
       .then(([notifications, unreadCount]) => {

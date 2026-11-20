@@ -36,12 +36,7 @@ couponRouter.get('/available', getAvailableCouponsController);
  * @desc    Validate and calculate coupon discount for an order subtotal
  * @access  Protected (Authenticated Customer)
  */
-couponRouter.post(
-  '/apply',
-  verifyJWT,
-  applyCouponValidation,
-  applyCouponController,
-);
+couponRouter.post('/apply', verifyJWT, applyCouponValidation, applyCouponController);
 
 // ─────────────────────────────────────────────
 // ADMIN / RESTAURANT OWNER MANAGEMENT ROUTES

@@ -22,9 +22,7 @@ export const getUserNotificationsController = asyncHandler(async (req, res) => {
     limit: req.query.limit,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Notifications fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Notifications fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -32,9 +30,7 @@ export const getUserNotificationsController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getUnreadCountController = asyncHandler(async (req, res) => {
   const result = await getUnreadNotificationCount(req.user._id);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Unread count fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Unread count fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -56,9 +52,7 @@ export const markNotificationAsReadController = asyncHandler(async (req, res) =>
 // ─────────────────────────────────────────────
 export const markAllAsReadController = asyncHandler(async (req, res) => {
   const result = await markAllNotificationsAsRead(req.user._id);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'All notifications marked as read'));
+  return res.status(200).json(new ApiResponse(200, result, 'All notifications marked as read'));
 });
 
 // ─────────────────────────────────────────────

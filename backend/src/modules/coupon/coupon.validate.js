@@ -93,15 +93,9 @@ export const createCouponValidation = [
     .isInt({ min: 1 })
     .withMessage('usageLimitPerUser must be an integer >= 1'),
 
-  body('newUserOnly')
-    .optional()
-    .isBoolean()
-    .withMessage('newUserOnly must be a boolean'),
+  body('newUserOnly').optional().isBoolean().withMessage('newUserOnly must be a boolean'),
 
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive must be a boolean'),
+  body('isActive').optional().isBoolean().withMessage('isActive must be a boolean'),
 
   validate,
 ];
@@ -110,9 +104,7 @@ export const createCouponValidation = [
 // UPDATE COUPON VALIDATION
 // ─────────────────────────────────────────────
 export const updateCouponValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid coupon ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid coupon ID is required in URL parameter'),
 
   body('name')
     .optional()
@@ -140,20 +132,11 @@ export const updateCouponValidation = [
     .isFloat({ min: 0 })
     .withMessage('minOrderAmount must be a non-negative number'),
 
-  body('startDate')
-    .optional()
-    .isISO8601()
-    .withMessage('Start date must be a valid ISO8601 date'),
+  body('startDate').optional().isISO8601().withMessage('Start date must be a valid ISO8601 date'),
 
-  body('expiryDate')
-    .optional()
-    .isISO8601()
-    .withMessage('Expiry date must be a valid ISO8601 date'),
+  body('expiryDate').optional().isISO8601().withMessage('Expiry date must be a valid ISO8601 date'),
 
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive must be a boolean'),
+  body('isActive').optional().isBoolean().withMessage('isActive must be a boolean'),
 
   validate,
 ];
@@ -162,11 +145,7 @@ export const updateCouponValidation = [
 // APPLY COUPON VALIDATION
 // ─────────────────────────────────────────────
 export const applyCouponValidation = [
-  body('code')
-    .notEmpty()
-    .withMessage('Coupon code is required')
-    .trim()
-    .toUpperCase(),
+  body('code').notEmpty().withMessage('Coupon code is required').trim().toUpperCase(),
 
   body('subtotal')
     .notEmpty()
@@ -174,10 +153,7 @@ export const applyCouponValidation = [
     .isFloat({ min: 0 })
     .withMessage('Subtotal must be a positive number'),
 
-  body('restaurantId')
-    .optional()
-    .isMongoId()
-    .withMessage('restaurantId must be a valid Mongo ID'),
+  body('restaurantId').optional().isMongoId().withMessage('restaurantId must be a valid Mongo ID'),
 
   validate,
 ];
@@ -186,30 +162,18 @@ export const applyCouponValidation = [
 // PARAMETER & QUERY VALIDATIONS
 // ─────────────────────────────────────────────
 export const couponIdParamValidation = [
-  param('id')
-    .isMongoId()
-    .withMessage('Valid coupon ID is required in URL parameter'),
+  param('id').isMongoId().withMessage('Valid coupon ID is required in URL parameter'),
   validate,
 ];
 
 export const listCouponsQueryValidation = [
-  query('restaurantId')
-    .optional()
-    .isMongoId()
-    .withMessage('restaurantId must be a valid Mongo ID'),
+  query('restaurantId').optional().isMongoId().withMessage('restaurantId must be a valid Mongo ID'),
 
-  query('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive must be a boolean'),
+  query('isActive').optional().isBoolean().withMessage('isActive must be a boolean'),
 
-  query('page')
-    .optional()
-    .isInt({ min: 1 }),
+  query('page').optional().isInt({ min: 1 }),
 
-  query('limit')
-    .optional()
-    .isInt({ min: 1, max: 100 }),
+  query('limit').optional().isInt({ min: 1, max: 100 }),
 
   validate,
 ];

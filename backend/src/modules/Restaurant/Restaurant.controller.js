@@ -40,9 +40,7 @@ export const createRestaurantController = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────
 export const getRestaurantsController = asyncHandler(async (req, res) => {
   const result = await getAllRestaurants(req.query);
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, 'Restaurants fetched successfully'));
+  return res.status(200).json(new ApiResponse(200, result, 'Restaurants fetched successfully'));
 });
 
 // ─────────────────────────────────────────────
@@ -88,11 +86,7 @@ export const updateRestaurantController = asyncHandler(async (req, res) => {
 // PATCH /api/v1/restaurants/:id/status (Protected - Owner or Admin)
 // ─────────────────────────────────────────────
 export const toggleRestaurantStatusController = asyncHandler(async (req, res) => {
-  const restaurant = await toggleRestaurantStatus(
-    req.params.id,
-    req.user,
-    req.body.isOpen,
-  );
+  const restaurant = await toggleRestaurantStatus(req.params.id, req.user, req.body.isOpen);
 
   return res
     .status(200)

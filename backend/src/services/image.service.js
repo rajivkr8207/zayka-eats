@@ -18,11 +18,7 @@ const getImageKitClient = () => {
   return client;
 };
 
-export async function UploadImageToImageKit({
-  buffer,
-  fileName,
-  folderPath = 'users',
-}) {
+export async function UploadImageToImageKit({ buffer, fileName, folderPath = 'users' }) {
   if (!buffer) {
     throw new ApiError(400, 'Image buffer is required for upload');
   }

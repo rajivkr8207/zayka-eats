@@ -57,24 +57,14 @@ deliveryRouter.get('/profile/me', verifyJWT, getMyProfileController);
  * @desc    Get delivery partner public/details profile by partner ID
  * @access  Protected (Owner, Rider, or Admin)
  */
-deliveryRouter.get(
-  '/profile/:id',
-  verifyJWT,
-  partnerIdParamValidation,
-  getPartnerByIdController,
-);
+deliveryRouter.get('/profile/:id', verifyJWT, partnerIdParamValidation, getPartnerByIdController);
 
 /**
  * @route   PATCH /api/v1/delivery/profile
  * @desc    Update delivery partner profile (vehicle info, profile pic, bank details)
  * @access  Protected (Delivery Partner)
  */
-deliveryRouter.patch(
-  '/profile',
-  verifyJWT,
-  receiveDeliveryDocuments,
-  updateProfileController,
-);
+deliveryRouter.patch('/profile', verifyJWT, receiveDeliveryDocuments, updateProfileController);
 
 // ─────────────────────────────────────────────
 // REAL-TIME DUTY & LIVE GPS
@@ -97,12 +87,7 @@ deliveryRouter.patch(
  * @desc    Rider app live GPS ping updates coordinates & updates active delivery tracks
  * @access  Protected (Delivery Partner)
  */
-deliveryRouter.post(
-  '/location',
-  verifyJWT,
-  updateLocationValidation,
-  updateLiveLocationController,
-);
+deliveryRouter.post('/location', verifyJWT, updateLocationValidation, updateLiveLocationController);
 
 // ─────────────────────────────────────────────
 // NEARBY RIDERS (DISPATCH / ORDER ASSIGNMENT)

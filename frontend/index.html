@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#121212" />
+  <meta name="description" content="Zayka Eats — Delicious food delivered fast and fresh from your favorite local restaurants." />
+  <title>Zayka Eats — Food Delivery</title>
+
+  <!-- Preconnect and Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Immediate Theme Initialization Script (Prevents flash of wrong theme) -->
+  <script>
+    (function () {
+      try {
+        const storedTheme = localStorage.getItem('zayka_theme') || 'dark';
+        let isDark = storedTheme === 'dark';
+        if (storedTheme === 'system') {
+          isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+
+<body class="bg-app text-primary min-h-screen font-sans antialiased selection:bg-brand selection:text-white">
+  <div id="root"></div>
+  <script type="module" src="/src/app/main.jsx"></script>
+</body>
+
+</html>

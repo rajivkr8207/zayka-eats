@@ -2,10 +2,7 @@ import { param, query } from 'express-validator';
 import { validate } from '../../config/validate.js';
 
 export const listActivityLogsValidation = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page must be a positive integer'),
+  query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
 
   query('limit')
     .optional()
@@ -17,9 +14,7 @@ export const listActivityLogsValidation = [
     .isIn(['success', 'failure'])
     .withMessage("Outcome must be either 'success' or 'failure'"),
 
-  query('actorRole')
-    .optional()
-    .trim(),
+  query('actorRole').optional().trim(),
 
   query('entityType')
     .optional()
@@ -56,10 +51,7 @@ export const listActivityLogsValidation = [
 ];
 
 export const myActivityLogsValidation = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page must be a positive integer'),
+  query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
 
   query('limit')
     .optional()

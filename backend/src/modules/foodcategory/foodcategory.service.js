@@ -10,12 +10,7 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 // ─────────────────────────────────────────────
 // CREATE FOOD CATEGORY
 // ─────────────────────────────────────────────
-export const createFoodCategory = async ({
-  user,
-  categoryData,
-  imageBuffer,
-  imageMimeType,
-}) => {
+export const createFoodCategory = async ({ user, categoryData, imageBuffer, imageMimeType }) => {
   const { restaurantId, menuId, name, description, sortOrder, isActive } = categoryData;
 
   const restaurant = await Restaurant.findById(restaurantId);
@@ -42,10 +37,7 @@ export const createFoodCategory = async ({
     name: new RegExp(`^${trimmedName}$`, 'i'),
   });
   if (existingCategory) {
-    throw new ApiError(
-      409,
-      `A food category named '${trimmedName}' already exists in this menu`,
-    );
+    throw new ApiError(409, `A food category named '${trimmedName}' already exists in this menu`);
   }
 
   // Upload image to ImageKit 'zayka' folder if provided

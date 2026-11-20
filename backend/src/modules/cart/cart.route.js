@@ -53,24 +53,14 @@ cartRouter.patch(
  * @desc    Remove an item from the cart
  * @access  Protected
  */
-cartRouter.delete(
-  '/items/:itemId',
-  verifyJWT,
-  itemIdParamValidation,
-  removeCartItemController,
-);
+cartRouter.delete('/items/:itemId', verifyJWT, itemIdParamValidation, removeCartItemController);
 
 /**
  * @route   POST /api/v1/cart/coupon
  * @desc    Apply discount coupon code to cart
  * @access  Protected
  */
-cartRouter.post(
-  '/coupon',
-  verifyJWT,
-  applyCouponValidation,
-  applyCouponController,
-);
+cartRouter.post('/coupon', verifyJWT, applyCouponValidation, applyCouponController);
 
 /**
  * @route   DELETE /api/v1/cart/coupon

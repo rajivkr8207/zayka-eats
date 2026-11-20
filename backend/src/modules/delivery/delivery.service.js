@@ -159,7 +159,9 @@ export const getDeliveryPartnerById = async (partnerId, requesterUser) => {
   let query = DeliveryPartner.findById(partnerId).populate('user', 'fullName email mobile');
 
   if (isAdmin) {
-    query = query.select('+licenseNumber +documents.aadhaarDocument +documents.drivingLicenseImage +documents.vehicleRcImage');
+    query = query.select(
+      '+licenseNumber +documents.aadhaarDocument +documents.drivingLicenseImage +documents.vehicleRcImage',
+    );
   }
 
   const partner = await query;
@@ -172,22 +174,21 @@ export const getDeliveryPartnerById = async (partnerId, requesterUser) => {
 // ─────────────────────────────────────────────
 // UPDATE PROFILE
 // ─────────────────────────────────────────────
-export const updateDeliveryPartnerProfile = async ({
-  userId,
-  updateData,
-  profileImageFile,
-}) => {
+export const updateDeliveryPartnerProfile = async ({ userId, updateData, profileImageFile }) => {
   const partner = await DeliveryPartner.findOne({ user: userId });
   if (!partner) {
     throw new ApiError(404, 'Delivery partner profile not found');
   }
 
   const updates = {};
-  if (updateData.emergencyContactName !== undefined) updates.emergencyContactName = updateData.emergencyContactName.trim();
-  if (updateData.emergencyContactPhone !== undefined) updates.emergencyContactPhone = updateData.emergencyContactPhone.trim();
+  if (updateData.emergencyContactName !== undefined)
+    updates.emergencyContactName = updateData.emergencyContactName.trim();
+  if (updateData.emergencyContactPhone !== undefined)
+    updates.emergencyContactPhone = updateData.emergencyContactPhone.trim();
   if (updateData.vehicleModel !== undefined) updates.vehicleModel = updateData.vehicleModel.trim();
   if (updateData.vehicleColor !== undefined) updates.vehicleColor = updateData.vehicleColor.trim();
-  if (updateData.vehicleNumber) updates.vehicleNumber = updateData.vehicleNumber.trim().toUpperCase();
+  if (updateData.vehicleNumber)
+    updates.vehicleNumber = updateData.vehicleNumber.trim().toUpperCase();
 
   if (profileImageFile) {
     if (profileImageFile.size > MAX_FILE_SIZE) {
@@ -216,12 +217,7 @@ export const updateDeliveryPartnerProfile = async ({
 // ─────────────────────────────────────────────
 // TOGGLE ONLINE / OFFLINE STATUS
 // ─────────────────────────────────────────────
-export const toggleOnlineStatus = async ({
-  userId,
-  isOnline,
-  latitude,
-  longitude,
-}) => {
+export const toggleOnlineStatus = async ({ userId, isOnline, latitude, longitude }) => {
   const partner = await DeliveryPartner.findOne({ user: userId });
   if (!partner) {
     throw new ApiError(404, 'Delivery partner profile not found');

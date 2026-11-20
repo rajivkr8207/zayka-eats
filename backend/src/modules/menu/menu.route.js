@@ -49,13 +49,7 @@ menuRouter.get('/:id', menuIdParamValidation, getMenuByIdController);
  * @desc    Create a new menu for a restaurant (with optional image <= 5MB)
  * @access  Protected (Restaurant Owner or Admin)
  */
-menuRouter.post(
-  '/',
-  verifyJWT,
-  receiveOptionalImage,
-  createMenuValidation,
-  createMenuController,
-);
+menuRouter.post('/', verifyJWT, receiveOptionalImage, createMenuValidation, createMenuController);
 
 /**
  * @route   PATCH /api/v1/menus/:id
@@ -75,23 +69,13 @@ menuRouter.patch(
  * @desc    Toggle menu active/inactive status
  * @access  Protected (Restaurant Owner or Admin)
  */
-menuRouter.patch(
-  '/:id/status',
-  verifyJWT,
-  menuIdParamValidation,
-  toggleMenuStatusController,
-);
+menuRouter.patch('/:id/status', verifyJWT, menuIdParamValidation, toggleMenuStatusController);
 
 /**
  * @route   DELETE /api/v1/menus/:id
  * @desc    Delete a menu and its associated food categories
  * @access  Protected (Restaurant Owner or Admin)
  */
-menuRouter.delete(
-  '/:id',
-  verifyJWT,
-  menuIdParamValidation,
-  deleteMenuController,
-);
+menuRouter.delete('/:id', verifyJWT, menuIdParamValidation, deleteMenuController);
 
 export default menuRouter;

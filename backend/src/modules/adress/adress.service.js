@@ -54,12 +54,16 @@ export const reverseGeocodeCoordinates = async (latitude, longitude) => {
     const addressLine1 = line1Parts.join(', ');
 
     // Line 2: Road, Street, Locality, Suburb
-    const line2Parts = [addr.road || addr.street, addr.neighbourhood || addr.suburb].filter(Boolean);
+    const line2Parts = [addr.road || addr.street, addr.neighbourhood || addr.suburb].filter(
+      Boolean,
+    );
     const addressLine2 = line2Parts.join(', ');
 
     const landmark = addr.neighbourhood || addr.poi || '';
 
-    const formattedAddress = data.display_name || [addressLine1, addressLine2, city, state, pincode].filter(Boolean).join(', ');
+    const formattedAddress =
+      data.display_name ||
+      [addressLine1, addressLine2, city, state, pincode].filter(Boolean).join(', ');
 
     return {
       latitude: lat,
@@ -94,13 +98,7 @@ export const reverseGeocodeCoordinates = async (latitude, longitude) => {
 // CREATE USER ADDRESS (Auto-fetch / Map Pick / Manual)
 // ─────────────────────────────────────────────
 export const createAddress = async ({ user, addressData }) => {
-  const {
-    fullName,
-    phone,
-    alternatePhone,
-    addressType = 'home',
-    isDefault,
-  } = addressData;
+  const { fullName, phone, alternatePhone, addressType = 'home', isDefault } = addressData;
 
   let {
     addressLine1,
@@ -126,8 +124,10 @@ export const createAddress = async ({ user, addressData }) => {
   }
 
   // Resolve coordinates
-  let lat = latitude !== undefined && latitude !== null && latitude !== '' ? Number(latitude) : null;
-  let lng = longitude !== undefined && longitude !== null && longitude !== '' ? Number(longitude) : null;
+  let lat =
+    latitude !== undefined && latitude !== null && latitude !== '' ? Number(latitude) : null;
+  let lng =
+    longitude !== undefined && longitude !== null && longitude !== '' ? Number(longitude) : null;
 
   if ((lat === null || lng === null) && Array.isArray(coordinates) && coordinates.length === 2) {
     lng = Number(coordinates[0]);
@@ -142,7 +142,8 @@ export const createAddress = async ({ user, addressData }) => {
       if (!state) state = geo.state;
       if (!pincode) pincode = geo.pincode;
       if (!country || country === 'India') country = geo.country || 'India';
-      if (!addressLine1) addressLine1 = geo.addressLine1 || geo.addressLine2 || geo.formattedAddress.split(',')[0];
+      if (!addressLine1)
+        addressLine1 = geo.addressLine1 || geo.addressLine2 || geo.formattedAddress.split(',')[0];
       if (!addressLine2) addressLine2 = geo.addressLine2;
       if (!landmark) landmark = geo.landmark;
     }
@@ -185,8 +186,7 @@ export const createAddress = async ({ user, addressData }) => {
 
   const location = {
     type: 'Point',
-    coordinates:
-      lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng) ? [lng, lat] : [0, 0],
+    coordinates: lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng) ? [lng, lat] : [0, 0],
   };
 
   const address = await Address.create({
@@ -255,7 +255,8 @@ export const updateAddress = async ({ addressId, userId, updateData }) => {
 
   if (updateData.fullName) updates.fullName = updateData.fullName.trim();
   if (updateData.phone) updates.phone = updateData.phone.trim();
-  if (updateData.alternatePhone !== undefined) updates.alternatePhone = updateData.alternatePhone.trim();
+  if (updateData.alternatePhone !== undefined)
+    updates.alternatePhone = updateData.alternatePhone.trim();
   if (updateData.addressLine1) updates.addressLine1 = updateData.addressLine1.trim();
   if (updateData.addressLine2 !== undefined) updates.addressLine2 = updateData.addressLine2.trim();
   if (updateData.landmark !== undefined) updates.landmark = updateData.landmark.trim();
@@ -266,8 +267,16 @@ export const updateAddress = async ({ addressId, userId, updateData }) => {
   if (updateData.addressType) updates.addressType = updateData.addressType;
 
   // Handle coordinates update
-  const lat = updateData.latitude !== undefined && updateData.latitude !== null && updateData.latitude !== '' ? Number(updateData.latitude) : null;
-  const lng = updateData.longitude !== undefined && updateData.longitude !== null && updateData.longitude !== '' ? Number(updateData.longitude) : null;
+  const lat =
+    updateData.latitude !== undefined && updateData.latitude !== null && updateData.latitude !== ''
+      ? Number(updateData.latitude)
+      : null;
+  const lng =
+    updateData.longitude !== undefined &&
+    updateData.longitude !== null &&
+    updateData.longitude !== ''
+      ? Number(updateData.longitude)
+      : null;
 
   if (lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng)) {
     updates.location = {
@@ -284,7 +293,8 @@ export const updateAddress = async ({ addressId, userId, updateData }) => {
 
   // Rebuild formatted address string
   const finalLine1 = updates.addressLine1 || address.addressLine1;
-  const finalLine2 = updates.addressLine2 !== undefined ? updates.addressLine2 : address.addressLine2;
+  const finalLine2 =
+    updates.addressLine2 !== undefined ? updates.addressLine2 : address.addressLine2;
   const finalLandmark = updates.landmark !== undefined ? updates.landmark : address.landmark;
   const finalCity = updates.city || address.city;
   const finalState = updates.state || address.state;
@@ -355,7 +365,9 @@ export const deleteAddress = async (addressId, userId) => {
 
   // If the deleted address was default, promote the next active address to default
   if (wasDefault) {
-    const nextAddress = await Address.findOne({ user: userId, isActive: true }).sort({ updatedAt: -1 });
+    const nextAddress = await Address.findOne({ user: userId, isActive: true }).sort({
+      updatedAt: -1,
+    });
     if (nextAddress) {
       nextAddress.isDefault = true;
       await nextAddress.save();

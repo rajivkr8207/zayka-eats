@@ -13,27 +13,37 @@ const getActionAndEntity = (req, body) => {
 
   // 1. Auth routes
   if (lowerRoute.startsWith('/auth')) {
-    if (lowerRoute.endsWith('/register')) return { action: 'Registered new user account', entityType: 'user' };
+    if (lowerRoute.endsWith('/register'))
+      return { action: 'Registered new user account', entityType: 'user' };
     if (lowerRoute.endsWith('/login')) return { action: 'User logged in', entityType: 'user' };
     if (lowerRoute.endsWith('/logout')) return { action: 'User logged out', entityType: 'user' };
-    if (lowerRoute.endsWith('/verify-otp')) return { action: 'Verified user account via OTP', entityType: 'user' };
-    if (lowerRoute.endsWith('/resend-otp')) return { action: 'Requested OTP resend', entityType: 'user' };
-    if (lowerRoute.endsWith('/forgot-password')) return { action: 'Requested password reset link', entityType: 'user' };
-    if (lowerRoute.endsWith('/reset-password')) return { action: 'Reset account password', entityType: 'user' };
-    if (lowerRoute.endsWith('/change-password')) return { action: 'Changed account password', entityType: 'user' };
-    if (lowerRoute.endsWith('/profile')) return { action: 'Updated user profile', entityType: 'user' };
+    if (lowerRoute.endsWith('/verify-otp'))
+      return { action: 'Verified user account via OTP', entityType: 'user' };
+    if (lowerRoute.endsWith('/resend-otp'))
+      return { action: 'Requested OTP resend', entityType: 'user' };
+    if (lowerRoute.endsWith('/forgot-password'))
+      return { action: 'Requested password reset link', entityType: 'user' };
+    if (lowerRoute.endsWith('/reset-password'))
+      return { action: 'Reset account password', entityType: 'user' };
+    if (lowerRoute.endsWith('/change-password'))
+      return { action: 'Changed account password', entityType: 'user' };
+    if (lowerRoute.endsWith('/profile'))
+      return { action: 'Updated user profile', entityType: 'user' };
     return { action: `User auth operation (${method})`, entityType: 'user' };
   }
 
   // 2. Orders
   if (lowerRoute.startsWith('/orders')) {
-    if (lowerRoute.endsWith('/verify-payment')) return { action: 'Verified online payment for order', entityType: 'order' };
+    if (lowerRoute.endsWith('/verify-payment'))
+      return { action: 'Verified online payment for order', entityType: 'order' };
     if (/\/orders\/[^/]+\/status$/.test(lowerRoute)) {
       const newStatus = req.body?.status || req.body?.newStatus || 'updated';
       return { action: `Updated order status to '${newStatus}'`, entityType: 'order' };
     }
-    if (/\/orders\/[^/]+\/assign-rider$/.test(lowerRoute)) return { action: 'Assigned delivery partner to order', entityType: 'order' };
-    if (/\/orders\/[^/]+\/cancel$/.test(lowerRoute)) return { action: 'Cancelled order', entityType: 'order' };
+    if (/\/orders\/[^/]+\/assign-rider$/.test(lowerRoute))
+      return { action: 'Assigned delivery partner to order', entityType: 'order' };
+    if (/\/orders\/[^/]+\/cancel$/.test(lowerRoute))
+      return { action: 'Cancelled order', entityType: 'order' };
     if (method === 'POST') {
       const orderNum = body?.data?.orderNumber ? ` (${body.data.orderNumber})` : '';
       return { action: `Placed food order${orderNum}`, entityType: 'order' };
@@ -52,26 +62,32 @@ const getActionAndEntity = (req, body) => {
       return { action: `Toggled restaurant status to '${state}'`, entityType: 'restaurant' };
     }
     if (method === 'POST') return { action: 'Registered new restaurant', entityType: 'restaurant' };
-    if (method === 'PATCH' || method === 'PUT') return { action: 'Updated restaurant details', entityType: 'restaurant' };
+    if (method === 'PATCH' || method === 'PUT')
+      return { action: 'Updated restaurant details', entityType: 'restaurant' };
     if (method === 'DELETE') return { action: 'Deleted restaurant', entityType: 'restaurant' };
     return { action: `Restaurant ${method.toLowerCase()}d`, entityType: 'restaurant' };
   }
 
   // 4. Menus
   if (lowerRoute.startsWith('/menus')) {
-    if (/\/menus\/[^/]+\/status$/.test(lowerRoute)) return { action: 'Toggled menu status', entityType: 'menu' };
+    if (/\/menus\/[^/]+\/status$/.test(lowerRoute))
+      return { action: 'Toggled menu status', entityType: 'menu' };
     if (method === 'POST') return { action: 'Created restaurant menu', entityType: 'menu' };
-    if (method === 'PATCH' || method === 'PUT') return { action: 'Updated restaurant menu', entityType: 'menu' };
+    if (method === 'PATCH' || method === 'PUT')
+      return { action: 'Updated restaurant menu', entityType: 'menu' };
     if (method === 'DELETE') return { action: 'Deleted restaurant menu', entityType: 'menu' };
     return { action: `Menu ${method.toLowerCase()}d`, entityType: 'menu' };
   }
 
   // 5. Food Categories
   if (lowerRoute.startsWith('/food-categories')) {
-    if (/\/food-categories\/[^/]+\/status$/.test(lowerRoute)) return { action: 'Toggled food category status', entityType: 'food_category' };
+    if (/\/food-categories\/[^/]+\/status$/.test(lowerRoute))
+      return { action: 'Toggled food category status', entityType: 'food_category' };
     if (method === 'POST') return { action: 'Created food category', entityType: 'food_category' };
-    if (method === 'PATCH' || method === 'PUT') return { action: 'Updated food category', entityType: 'food_category' };
-    if (method === 'DELETE') return { action: 'Deleted food category', entityType: 'food_category' };
+    if (method === 'PATCH' || method === 'PUT')
+      return { action: 'Updated food category', entityType: 'food_category' };
+    if (method === 'DELETE')
+      return { action: 'Deleted food category', entityType: 'food_category' };
     return { action: `Food category ${method.toLowerCase()}d`, entityType: 'food_category' };
   }
 
@@ -79,7 +95,10 @@ const getActionAndEntity = (req, body) => {
   if (lowerRoute.startsWith('/cart')) {
     if (lowerRoute.endsWith('/coupon')) {
       return {
-        action: method === 'DELETE' ? 'Removed coupon from cart' : `Applied coupon to cart (${req.body?.code || ''})`.trim(),
+        action:
+          method === 'DELETE'
+            ? 'Removed coupon from cart'
+            : `Applied coupon to cart (${req.body?.code || ''})`.trim(),
         entityType: 'cart',
       };
     }
@@ -89,68 +108,93 @@ const getActionAndEntity = (req, body) => {
         entityType: 'cart',
       };
     }
-    if (lowerRoute.endsWith('/items') && method === 'POST') return { action: 'Added item to cart', entityType: 'cart' };
+    if (lowerRoute.endsWith('/items') && method === 'POST')
+      return { action: 'Added item to cart', entityType: 'cart' };
     if (method === 'DELETE') return { action: 'Cleared cart', entityType: 'cart' };
     return { action: `Cart ${method.toLowerCase()}d`, entityType: 'cart' };
   }
 
   // 7. Delivery
   if (lowerRoute.startsWith('/delivery')) {
-    if (lowerRoute.endsWith('/onboard')) return { action: 'Submitted delivery partner KYC onboarding', entityType: 'delivery' };
+    if (lowerRoute.endsWith('/onboard'))
+      return { action: 'Submitted delivery partner KYC onboarding', entityType: 'delivery' };
     if (lowerRoute.endsWith('/status/online')) {
       const state = req.body?.isOnline ? 'Online' : 'Offline';
       return { action: `Delivery partner duty set to '${state}'`, entityType: 'delivery' };
     }
-    if (lowerRoute.endsWith('/profile')) return { action: 'Updated delivery profile', entityType: 'delivery' };
-    if (/\/delivery\/tasks\/[^/]+\/accept$/.test(lowerRoute)) return { action: 'Accepted delivery task', entityType: 'order' };
-    if (/\/delivery\/tasks\/[^/]+\/complete$/.test(lowerRoute)) return { action: 'Delivered order (Completed task)', entityType: 'order' };
+    if (lowerRoute.endsWith('/profile'))
+      return { action: 'Updated delivery profile', entityType: 'delivery' };
+    if (/\/delivery\/tasks\/[^/]+\/accept$/.test(lowerRoute))
+      return { action: 'Accepted delivery task', entityType: 'order' };
+    if (/\/delivery\/tasks\/[^/]+\/complete$/.test(lowerRoute))
+      return { action: 'Delivered order (Completed task)', entityType: 'order' };
     if (/\/delivery\/partners\/[^/]+\/verify$/.test(lowerRoute)) {
       const status = req.body?.status || 'reviewed';
-      return { action: `Admin reviewed delivery partner verification (${status})`, entityType: 'delivery' };
+      return {
+        action: `Admin reviewed delivery partner verification (${status})`,
+        entityType: 'delivery',
+      };
     }
     return { action: `Delivery ${method.toLowerCase()}d`, entityType: 'delivery' };
   }
 
   // 8. Payments
   if (lowerRoute.startsWith('/payments')) {
-    if (lowerRoute.endsWith('/initiate')) return { action: 'Initiated online payment', entityType: 'payment' };
-    if (lowerRoute.endsWith('/verify')) return { action: 'Verified payment transaction', entityType: 'payment' };
-    if (lowerRoute.endsWith('/webhook')) return { action: 'Processed Razorpay webhook', entityType: 'payment' };
-    if (/\/payments\/[^/]+\/refund$/.test(lowerRoute)) return { action: 'Processed payment refund', entityType: 'payment' };
+    if (lowerRoute.endsWith('/initiate'))
+      return { action: 'Initiated online payment', entityType: 'payment' };
+    if (lowerRoute.endsWith('/verify'))
+      return { action: 'Verified payment transaction', entityType: 'payment' };
+    if (lowerRoute.endsWith('/webhook'))
+      return { action: 'Processed Razorpay webhook', entityType: 'payment' };
+    if (/\/payments\/[^/]+\/refund$/.test(lowerRoute))
+      return { action: 'Processed payment refund', entityType: 'payment' };
     return { action: `Payment ${method.toLowerCase()}d`, entityType: 'payment' };
   }
 
   // 9. Coupons
   if (lowerRoute.startsWith('/coupons')) {
-    if (lowerRoute.endsWith('/apply')) return { action: `Validated coupon (${req.body?.code || ''})`.trim(), entityType: 'coupon' };
-    if (method === 'POST') return { action: `Created coupon '${req.body?.code || ''}'`.trim(), entityType: 'coupon' };
-    if (method === 'PATCH' || method === 'PUT') return { action: 'Updated coupon details', entityType: 'coupon' };
+    if (lowerRoute.endsWith('/apply'))
+      return { action: `Validated coupon (${req.body?.code || ''})`.trim(), entityType: 'coupon' };
+    if (method === 'POST')
+      return { action: `Created coupon '${req.body?.code || ''}'`.trim(), entityType: 'coupon' };
+    if (method === 'PATCH' || method === 'PUT')
+      return { action: 'Updated coupon details', entityType: 'coupon' };
     if (method === 'DELETE') return { action: 'Deleted coupon', entityType: 'coupon' };
     return { action: `Coupon ${method.toLowerCase()}d`, entityType: 'coupon' };
   }
 
   // 10. Reviews
   if (lowerRoute.startsWith('/reviews')) {
-    if (method === 'POST') return { action: `Submitted rating & review (${req.body?.rating || 5}★)`, entityType: 'review' };
-    if (method === 'PATCH' || method === 'PUT') return { action: 'Updated review', entityType: 'review' };
+    if (method === 'POST')
+      return {
+        action: `Submitted rating & review (${req.body?.rating || 5}★)`,
+        entityType: 'review',
+      };
+    if (method === 'PATCH' || method === 'PUT')
+      return { action: 'Updated review', entityType: 'review' };
     if (method === 'DELETE') return { action: 'Deleted review', entityType: 'review' };
     return { action: `Review ${method.toLowerCase()}d`, entityType: 'review' };
   }
 
   // 11. Addresses
   if (lowerRoute.startsWith('/addresses')) {
-    if (/\/addresses\/[^/]+\/set-default$/.test(lowerRoute)) return { action: 'Set primary delivery address', entityType: 'address' };
+    if (/\/addresses\/[^/]+\/set-default$/.test(lowerRoute))
+      return { action: 'Set primary delivery address', entityType: 'address' };
     if (method === 'POST') return { action: 'Added delivery address', entityType: 'address' };
-    if (method === 'PATCH' || method === 'PUT') return { action: 'Updated delivery address', entityType: 'address' };
+    if (method === 'PATCH' || method === 'PUT')
+      return { action: 'Updated delivery address', entityType: 'address' };
     if (method === 'DELETE') return { action: 'Deleted delivery address', entityType: 'address' };
     return { action: `Address ${method.toLowerCase()}d`, entityType: 'address' };
   }
 
   // 12. Notifications
   if (lowerRoute.startsWith('/notifications')) {
-    if (lowerRoute.endsWith('/read-all')) return { action: 'Marked all notifications as read', entityType: 'notification' };
-    if (lowerRoute.endsWith('/clear-all')) return { action: 'Cleared all notifications', entityType: 'notification' };
-    if (/\/notifications\/[^/]+\/read$/.test(lowerRoute)) return { action: 'Marked notification as read', entityType: 'notification' };
+    if (lowerRoute.endsWith('/read-all'))
+      return { action: 'Marked all notifications as read', entityType: 'notification' };
+    if (lowerRoute.endsWith('/clear-all'))
+      return { action: 'Cleared all notifications', entityType: 'notification' };
+    if (/\/notifications\/[^/]+\/read$/.test(lowerRoute))
+      return { action: 'Marked notification as read', entityType: 'notification' };
     if (method === 'DELETE') return { action: 'Deleted notification', entityType: 'notification' };
     return { action: `Notification ${method.toLowerCase()}d`, entityType: 'notification' };
   }
@@ -246,7 +290,9 @@ const getMessage = (body, outcome) => {
     .replace(/[\r\n\t]+/g, ' ')
     .slice(0, 1000);
 
-  return combined || (outcome === 'success' ? 'Operation completed successfully' : 'Operation failed');
+  return (
+    combined || (outcome === 'success' ? 'Operation completed successfully' : 'Operation failed')
+  );
 };
 
 const getDetails = (req, body, outcome) => {
@@ -332,7 +378,10 @@ export const auditActivity = (req, res, next) => {
       entityType,
       entityId,
       method: req.method,
-      route: req.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '').slice(0, 240),
+      route: req.originalUrl
+        .split('?')[0]
+        .replace(/^\/api\/v\d+/, '')
+        .slice(0, 240),
       ipAddress: clientIp ? String(clientIp).slice(0, 45) : null,
       userAgent: req.headers['user-agent'] ? String(req.headers['user-agent']).slice(0, 500) : null,
       outcome,
