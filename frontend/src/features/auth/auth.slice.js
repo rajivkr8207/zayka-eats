@@ -9,15 +9,6 @@ import {
 } from './auth.thunk.js';
 import { initializeSocket, disconnectSocket } from '../../lib/socket.js';
 
-// Load initial user state from localStorage
-const storedToken = localStorage.getItem('zayka_access_token');
-let storedUser;
-try {
-  storedUser = JSON.parse(localStorage.getItem('zayka_user'));
-} catch {
-  storedUser = null;
-}
-
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -34,19 +25,13 @@ const authSlice = createSlice({
       state.token = accessToken;
       state.isAuthenticated = true;
       state.error = null;
-      if (accessToken) {
-        localStorage.setItem('zayka_access_token', accessToken);
-        localStorage.setItem('zayka_user', JSON.stringify(user));
-        initializeSocket(accessToken);
-      }
+
     },
     clearAuth: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem('zayka_access_token');
-      localStorage.removeItem('zayka_user');
       disconnectSocket();
     },
     clearAuthError: (state) => {
@@ -54,7 +39,6 @@ const authSlice = createSlice({
     },
     updateUserData: (state, action) => {
       state.user = { ...state.user, ...action.payload };
-      localStorage.setItem('zayka_user', JSON.stringify(state.user));
     },
   },
   extraReducers: (builder) => {

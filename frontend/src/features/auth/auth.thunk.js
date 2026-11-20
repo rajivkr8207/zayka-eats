@@ -9,8 +9,6 @@ export const loginUser = createAsyncThunk(
       const response = await authService.login(credentials);
       const data = response.data.data;
       if (data.accessToken) {
-        localStorage.setItem('zayka_access_token', data.accessToken);
-        localStorage.setItem('zayka_user', JSON.stringify(data.user));
         initializeSocket(data.accessToken);
       }
       return data;
@@ -42,8 +40,6 @@ export const verifyOtp = createAsyncThunk(
       const response = await authService.verifyOtp({ email, otp });
       const data = response.data.data;
       if (data?.accessToken) {
-        localStorage.setItem('zayka_access_token', data.accessToken);
-        localStorage.setItem('zayka_user', JSON.stringify(data.user));
         initializeSocket(data.accessToken);
       }
       return data;
@@ -60,7 +56,6 @@ export const fetchCurrentUser = createAsyncThunk(
     try {
       const response = await authService.getProfile();
       const user = response.data.data.user;
-      localStorage.setItem('zayka_user', JSON.stringify(user));
       return user;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch user profile');
@@ -75,7 +70,6 @@ export const updateUserProfile = createAsyncThunk(
       const isMultipart = formData instanceof FormData;
       const response = await authService.updateProfile(formData, isMultipart);
       const updatedUser = response.data.data.user;
-      localStorage.setItem('zayka_user', JSON.stringify(updatedUser));
       return updatedUser;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update profile');
@@ -89,8 +83,6 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async () => {
   } catch {
     // Continue cleanup even if server request fails
   }
-  localStorage.removeItem('zayka_access_token');
-  localStorage.removeItem('zayka_user');
   disconnectSocket();
   return null;
 });

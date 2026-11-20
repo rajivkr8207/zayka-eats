@@ -14,8 +14,6 @@ export const initializeSocket = (token) => {
     return socket;
   }
 
-  const accessToken = token || localStorage.getItem('zayka_access_token');
-  if (!accessToken) return null;
 
   socket = io(config.socketUrl, {
     auth: { token: accessToken },

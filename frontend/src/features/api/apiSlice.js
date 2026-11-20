@@ -5,13 +5,6 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
     baseUrl: config.apiBaseUrl,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('zayka_access_token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
     credentials: 'include',
   }),
   tagTypes: [
