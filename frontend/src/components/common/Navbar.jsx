@@ -56,11 +56,14 @@ const Navbar = () => {
           </Link>
 
           {/* Location Picker Pill (Desktop) */}
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-border-subtle text-xs text-text-secondary hover:border-border-strong cursor-pointer transition-colors">
+          <Link
+            to="/explore"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-border-subtle text-xs text-text-secondary hover:border-border-strong cursor-pointer transition-colors"
+          >
             <FiMapPin className="text-brand w-3.5 h-3.5 flex-shrink-0" />
-            <span className="font-medium truncate max-w-[150px]">Current Location</span>
+            <span className="font-medium truncate max-w-[150px]">Near You 📍</span>
             <FiChevronDown className="w-3 h-3 text-text-muted" />
-          </div>
+          </Link>
         </div>
 
         {/* Center: Search Bar (Desktop) */}
@@ -107,7 +110,7 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2 p-1.5 rounded-xl bg-surface border border-border-subtle hover:border-border-strong transition-all"
+                className="flex items-center gap-2 p-1.5 rounded-xl bg-surface border border-border-subtle hover:border-border-strong transition-all cursor-pointer"
               >
                 {user?.avatar ? (
                   <img
@@ -127,7 +130,7 @@ const Navbar = () => {
               </button>
 
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-surface border border-border-strong shadow-2xl z-50 p-1.5 divide-y divide-border-subtle">
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-surface border border-border-strong shadow-2xl z-50 p-1.5 divide-y divide-border-subtle">
                   <div className="px-3 py-2">
                     <p className="text-xs font-bold text-text-primary truncate">
                       {user?.fullName}
@@ -139,55 +142,128 @@ const Navbar = () => {
                   </div>
 
                   <div className="py-1">
+                    {/* Common to all */}
                     <Link
                       to="/profile"
                       onClick={() => setIsProfileOpen(false)}
-                      className="block px-3 py-2 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                      className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
                     >
                       My Profile
                     </Link>
-                    <Link
-                      to="/orders"
-                      onClick={() => setIsProfileOpen(false)}
-                      className="block px-3 py-2 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
-                    >
-                      My Orders
-                    </Link>
-                    <Link
-                      to="/addresses"
-                      onClick={() => setIsProfileOpen(false)}
-                      className="block px-3 py-2 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
-                    >
-                      Saved Addresses
-                    </Link>
 
-                    {/* Role specific portals */}
+                    {/* Customer-specific links */}
+                    {(!user?.role || user?.role === ROLES.CUSTOMER) && (
+                      <>
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Customer Dashboard
+                        </Link>
+                        <Link
+                          to="/orders"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          My Orders
+                        </Link>
+                        <Link
+                          to="/addresses"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Saved Addresses
+                        </Link>
+                      </>
+                    )}
+
+                    {/* Restaurant Owner Links */}
                     {user?.role === ROLES.RESTAURANT_OWNER && (
-                      <Link
-                        to="/owner/dashboard"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="block px-3 py-2 rounded-xl text-xs text-brand font-medium hover:bg-brand/10 transition-colors"
-                      >
-                        Restaurant Portal
-                      </Link>
+                      <>
+                        <Link
+                          to="/owner/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-brand font-bold hover:bg-brand/10 transition-colors"
+                        >
+                          Owner Dashboard
+                        </Link>
+                        <Link
+                          to="/owner/restaurants"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          My Restaurants
+                        </Link>
+                        <Link
+                          to="/owner/orders"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Live Orders
+                        </Link>
+                      </>
                     )}
+
+                    {/* Delivery Partner Links */}
                     {user?.role === ROLES.DELIVERY_PARTNER && (
-                      <Link
-                        to="/rider/dashboard"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="block px-3 py-2 rounded-xl text-brand font-medium hover:bg-brand/10 transition-colors"
-                      >
-                        Rider Dashboard
-                      </Link>
+                      <>
+                        <Link
+                          to="/rider/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-brand font-bold hover:bg-brand/10 transition-colors"
+                        >
+                          Rider Dashboard
+                        </Link>
+                        <Link
+                          to="/rider/history"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Delivery History
+                        </Link>
+                      </>
                     )}
+
+                    {/* Admin Links */}
                     {user?.role === ROLES.ADMIN && (
-                      <Link
-                        to="/admin/dashboard"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="block px-3 py-2 rounded-xl text-brand font-medium hover:bg-brand/10 transition-colors"
-                      >
-                        Admin Console
-                      </Link>
+                      <>
+                        <Link
+                          to="/admin/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-brand font-bold hover:bg-brand/10 transition-colors"
+                        >
+                          Admin Console
+                        </Link>
+                        <Link
+                          to="/admin/restaurants"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Restaurant Approvals
+                        </Link>
+                        <Link
+                          to="/admin/riders"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Rider Approvals
+                        </Link>
+                        <Link
+                          to="/admin/coupons"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Coupons
+                        </Link>
+                        <Link
+                          to="/admin/logs"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3 py-1.5 rounded-xl text-xs text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
+                        >
+                          Activity Logs
+                        </Link>
+                      </>
                     )}
                   </div>
 
@@ -195,7 +271,7 @@ const Navbar = () => {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10 transition-colors font-medium"
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10 transition-colors font-medium cursor-pointer"
                     >
                       <FiLogOut className="w-3.5 h-3.5" />
                       Sign Out

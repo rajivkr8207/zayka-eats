@@ -1,7 +1,16 @@
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
-import { FiArrowRight, FiClock, FiStar, FiTruck } from 'react-icons/fi';
+import { FiArrowRight, FiTruck, FiMapPin, FiCompass } from 'react-icons/fi';
+import { restaurantService } from '../features/restaurant/services/restaurant.service.js';
+import RestaurantCard from '../features/restaurant/components/RestaurantCard.jsx';
+import RestaurantCardSkeleton from '../features/restaurant/components/RestaurantCardSkeleton.jsx';
 
 const HomePage = () => {
+  const [restaurants, setRestaurants] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userCoords, setUserCoords] = useState(null);
+  const [locationName, setLocationName] = useState('Detecting location...');
+
   const categories = [
     { id: '1', name: 'Biryani', icon: '🍚', count: '14 places' },
     { id: '2', name: 'Pizzas', icon: '🍕', count: '28 places' },
@@ -11,41 +20,52 @@ const HomePage = () => {
     { id: '6', name: 'Desserts', icon: '🍰', count: '16 places' },
   ];
 
-  const featuredRestaurants = [
-    {
-      id: '1',
-      name: 'Zaika Mughlai Darbar',
-      cuisine: 'Biryani, North Indian, Kebabs',
-      rating: 4.8,
-      reviews: '1.2k',
-      deliveryTime: '25-30 min',
-      distance: '2.4 km',
-      offer: '50% OFF up to ₹100',
-      image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600&auto=format&fit=crop&q=80',
-    },
-    {
-      id: '2',
-      name: 'Pizza Romana Gourmet',
-      cuisine: 'Italian, Wood-fired Pizza, Pasta',
-      rating: 4.6,
-      reviews: '850',
-      deliveryTime: '20-25 min',
-      distance: '1.8 km',
-      offer: 'Free Delivery on ₹299+',
-      image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80',
-    },
-    {
-      id: '3',
-      name: 'The Burger Studio',
-      cuisine: 'American, Smashed Burgers, Shakes',
-      rating: 4.7,
-      reviews: '2.1k',
-      deliveryTime: '30-35 min',
-      distance: '3.1 km',
-      offer: 'Flat ₹50 OFF',
-      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80',
-    },
-  ];
+  const fetchFallbackRestaurants = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const res = await restaurantService.getRestaurants({ limit: 6 });
+      const data = res.data?.data?.restaurants || res.data?.data || [];
+      setRestaurants(Array.isArray(data) ? data : []);
+    } catch {
+      setRestaurants([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserCoords({ latitude, longitude });
+          setLocationName('Near your current GPS location 📍');
+
+          try {
+            const res = await restaurantService.getRestaurants({
+              latitude,
+              longitude,
+              limit: 6,
+            });
+            const data = res.data?.data?.restaurants || res.data?.data || [];
+            setRestaurants(Array.isArray(data) && data.length > 0 ? data : []);
+          } catch {
+            fetchFallbackRestaurants();
+          } finally {
+            setIsLoading(false);
+          }
+        },
+        () => {
+          setLocationName('Popular Food Spots');
+          fetchFallbackRestaurants();
+        },
+        { timeout: 7000 },
+      );
+    } else {
+      setLocationName('Popular Food Spots');
+      fetchFallbackRestaurants();
+    }
+  }, [fetchFallbackRestaurants]);
 
   return (
     <div className="space-y-12">
@@ -61,17 +81,22 @@ const HomePage = () => {
               Flavors of India, Delivered <span className="text-brand">Fresh & Hot.</span>
             </h1>
             <p className="text-sm text-text-secondary leading-relaxed">
-              Explore hundreds of verified local restaurants, hand-crafted kitchens, and top rated cuisines in your neighborhood.
+              Explore hundreds of verified local restaurants, hand-crafted kitchens, and top-rated cuisines right in your neighborhood.
             </p>
           </div>
 
-          <div className="pt-6 z-10">
+          <div className="pt-6 z-10 flex flex-wrap items-center gap-4">
             <Link
               to="/explore"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand hover:bg-brand-hover text-white text-sm font-bold shadow-lg shadow-orange-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Order Now <FiArrowRight className="w-4 h-4" />
             </Link>
+
+            <div className="flex items-center gap-2 text-xs text-text-muted bg-surface/80 backdrop-blur-md px-3.5 py-2 rounded-xl border border-border-subtle">
+              <FiMapPin className="text-brand w-3.5 h-3.5" />
+              <span>{locationName}</span>
+            </div>
           </div>
 
           {/* Decorative Background Blob */}
@@ -92,7 +117,9 @@ const HomePage = () => {
 
           <div className="pt-4 border-t border-border-subtle flex items-center justify-between text-xs">
             <span className="text-text-muted">Min order: ₹199</span>
-            <span className="text-brand font-semibold cursor-pointer hover:underline">Copy Code</span>
+            <Link to="/explore" className="text-brand font-semibold hover:underline">
+              Use Code
+            </Link>
           </div>
         </div>
       </section>
@@ -114,7 +141,7 @@ const HomePage = () => {
             <Link
               key={cat.id}
               to={`/explore?category=${encodeURIComponent(cat.name)}`}
-              className="bento-card p-4 flex flex-col items-center text-center gap-2 group cursor-pointer"
+              className="bento-card p-4 flex flex-col items-center text-center gap-2 group cursor-pointer hover:-translate-y-1 transition-transform"
             >
               <div className="w-14 h-14 rounded-2xl bg-surface-elevated border border-border-subtle flex items-center justify-center text-2xl group-hover:scale-110 group-hover:border-brand/40 transition-transform">
                 {cat.icon}
@@ -128,11 +155,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ── 3. Featured Restaurants (Minimalist Cards per Theme) ── */}
+      {/* ── 3. Near You Restaurants (Live GPS / Database) ── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-text-primary">Popular Restaurants</h2>
+            <h2 className="text-xl font-bold text-text-primary">
+              {userCoords ? 'Restaurants Near You' : 'Popular Restaurants'}
+            </h2>
             <p className="text-xs text-text-muted">Top rated dining spots with verified food quality</p>
           </div>
           <Link to="/explore" className="text-xs text-brand hover:underline font-semibold flex items-center gap-1">
@@ -140,52 +169,31 @@ const HomePage = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredRestaurants.map((res) => (
-            <div
-              key={res.id}
-              className="bento-card overflow-hidden group flex flex-col justify-between"
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <RestaurantCardSkeleton key={idx} />
+            ))}
+          </div>
+        ) : restaurants.length === 0 ? (
+          <div className="p-8 rounded-3xl bg-surface border border-border-strong text-center space-y-3">
+            <FiCompass className="w-8 h-8 text-brand mx-auto" />
+            <h3 className="text-sm font-bold text-text-primary">Discover More Restaurants</h3>
+            <p className="text-xs text-text-muted">Browse our complete catalogue of delicious places</p>
+            <Link
+              to="/explore"
+              className="inline-block px-4 py-2 rounded-xl bg-brand text-white text-xs font-bold"
             >
-              {/* Image & Badges */}
-              <div className="relative aspect-[16/10] overflow-hidden bg-surface-elevated">
-                <img
-                  src={res.image}
-                  alt={res.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-white text-[11px] font-bold flex items-center gap-1">
-                  <FiStar className="text-amber-400 fill-amber-400 w-3 h-3" />
-                  <span>{res.rating}</span>
-                  <span className="text-neutral-400">({res.reviews})</span>
-                </div>
-                {res.offer && (
-                  <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-brand text-white text-[11px] font-bold shadow-md">
-                    {res.offer}
-                  </div>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-bold text-base text-text-primary group-hover:text-brand transition-colors">
-                    {res.name}
-                  </h3>
-                  <p className="text-xs text-text-muted truncate mt-0.5">{res.cuisine}</p>
-                </div>
-
-                <div className="pt-3 border-t border-border-subtle flex items-center justify-between text-xs text-text-secondary">
-                  <div className="flex items-center gap-1.5">
-                    <FiClock className="w-3.5 h-3.5 text-brand" />
-                    <span>{res.deliveryTime}</span>
-                  </div>
-                  <span>•</span>
-                  <span>{res.distance}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              Explore Restaurants
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {restaurants.map((res) => (
+              <RestaurantCard key={res._id} restaurant={res} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

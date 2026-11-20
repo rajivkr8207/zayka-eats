@@ -7,10 +7,8 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authService.login(credentials);
-      const data = response.data.data;
-      if (data.accessToken) {
-        initializeSocket(data.accessToken);
-      }
+      const data = response.data?.data;
+      initializeSocket();
       return data;
     } catch (error) {
       const msg = error.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -21,11 +19,11 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (formData, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      const isMultipart = formData instanceof FormData;
-      const response = await authService.register(formData, isMultipart);
-      return response.data.data;
+      const isMultipart = userData instanceof FormData;
+      const response = await authService.register(userData, isMultipart);
+      return response.data?.data;
     } catch (error) {
       const msg = error.response?.data?.message || 'Registration failed.';
       return rejectWithValue(msg);
@@ -38,10 +36,8 @@ export const verifyOtp = createAsyncThunk(
   async ({ email, otp }, { rejectWithValue }) => {
     try {
       const response = await authService.verifyOtp({ email, otp });
-      const data = response.data.data;
-      if (data?.accessToken) {
-        initializeSocket(data.accessToken);
-      }
+      const data = response.data?.data;
+      initializeSocket();
       return data;
     } catch (error) {
       const msg = error.response?.data?.message || 'OTP verification failed.';
@@ -55,7 +51,10 @@ export const fetchCurrentUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await authService.getProfile();
-      const user = response.data.data.user;
+      const user = response.data?.data?.user || response.data?.data;
+      if (user) {
+        initializeSocket();
+      }
       return user;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch user profile');
@@ -69,7 +68,7 @@ export const updateUserProfile = createAsyncThunk(
     try {
       const isMultipart = formData instanceof FormData;
       const response = await authService.updateProfile(formData, isMultipart);
-      const updatedUser = response.data.data.user;
+      const updatedUser = response.data?.data?.user || response.data?.data;
       return updatedUser;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update profile');

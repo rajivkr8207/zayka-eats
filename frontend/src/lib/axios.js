@@ -2,7 +2,7 @@ import axios from 'axios';
 import config from '../config/config.js';
 
 const api = axios.create({
-  baseURL: `${config.apiBaseUrl}/api/v1`,
+  baseURL: config.apiBaseUrl ? `${config.apiBaseUrl}/api/v1` : '/api/v1',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -12,26 +12,18 @@ const api = axios.create({
 let isRefreshing = false;
 let failedQueue = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token);
+      prom.resolve();
     }
   });
   failedQueue = [];
 };
 
-// Request interceptor: attach Bearer token
-api.interceptors.request.use(
-  (reqConfig) => {
-    return reqConfig
-  },
-  (error) => Promise.reject(error),
-);
-
-// Response interceptor: handle automatic token refresh on 401
+// Response interceptor: handle automatic token refresh on 401 using httpOnly refreshToken cookie
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -48,10 +40,7 @@ api.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return api(originalRequest);
-          })
+          .then(() => api(originalRequest))
           .catch((err) => Promise.reject(err));
       }
 
@@ -59,19 +48,18 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshResponse = await axios.post(
-          `${config.apiBaseUrl}/auth/refresh-token`,
+        const refreshEndpoint = `${api.defaults.baseURL}/auth/refresh-token`;
+        await axios.post(
+          refreshEndpoint,
           {},
           { withCredentials: true },
         );
 
-        const newAccessToken = refreshResponse.data?.data?.accessToken;
-        if (newAccessToken) {
-          processQueue(null, newAccessToken);
-          return api(originalRequest);
-        }
+        // Cookies are refreshed and set by the server in the browser automatically
+        processQueue(null);
+        return api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(refreshError);
         window.dispatchEvent(new CustomEvent('auth:logout'));
         return Promise.reject(refreshError);
       } finally {

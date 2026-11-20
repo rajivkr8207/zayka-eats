@@ -3,37 +3,20 @@ import config from '../config/config.js';
 
 let socket = null;
 
-export const initializeSocket = (token) => {
+export const initializeSocket = () => {
   if (socket) {
-    if (token) {
-      socket.auth = { token };
-      if (!socket.connected) {
-        socket.connect();
-      }
+    if (!socket.connected) {
+      socket.connect();
     }
     return socket;
   }
 
-
   socket = io(config.socketUrl, {
-    auth: { token: accessToken },
     transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     withCredentials: true,
-  });
-
-  socket.on('connect', () => {
-    // Socket connected
-  });
-
-  socket.on('connect_error', () => {
-    // Socket connection error
-  });
-
-  socket.on('disconnect', () => {
-    // Socket disconnected
   });
 
   return socket;

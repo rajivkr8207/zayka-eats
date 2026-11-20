@@ -1,11 +1,15 @@
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../hooks/useAuth.js';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../cart/cart.thunk.js';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { toast } from 'react-toastify';
 import { FiLock, FiMail } from 'react-icons/fi';
+import { ROLES } from '../../../constants/roles.js';
 
 const LoginPage = () => {
   const { login, isLoading, error } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,8 +30,34 @@ const LoginPage = () => {
     try {
       const resultAction = await login(data);
       if (resultAction?.type?.endsWith('fulfilled')) {
-        toast.success('Welcome back to Zayka Eats! 🍽️');
-        navigate(from, { replace: true });
+        const user = resultAction.payload?.user;
+        toast.success(`Welcome back, ${user?.fullName || 'Foodie'}! 🍽️`);
+
+        // Check if there was a pending cart item before login
+        const pendingCartItem = sessionStorage.getItem('zayka_pending_cart_item');
+        if (pendingCartItem) {
+          try {
+            const parsed = JSON.parse(pendingCartItem);
+            sessionStorage.removeItem('zayka_pending_cart_item');
+            await dispatch(addToCart(parsed));
+            toast.info('Item added to your cart!');
+            navigate('/cart', { replace: true });
+            return;
+          } catch {
+            sessionStorage.removeItem('zayka_pending_cart_item');
+          }
+        }
+
+        // Role-based redirection
+        if (user?.role === ROLES.RESTAURANT_OWNER) {
+          navigate('/owner/dashboard', { replace: true });
+        } else if (user?.role === ROLES.DELIVERY_PARTNER) {
+          navigate('/rider/dashboard', { replace: true });
+        } else if (user?.role === ROLES.ADMIN) {
+          navigate('/admin/dashboard', { replace: true });
+        } else {
+          navigate(from !== '/login' ? from : '/', { replace: true });
+        }
       }
     } catch {
       // Handled in slice
@@ -94,7 +124,7 @@ const LoginPage = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md hover:shadow-orange-500/25 transition-all disabled:opacity-50"
+          className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md hover:shadow-orange-500/25 transition-all disabled:opacity-50 cursor-pointer"
         >
           {isLoading ? 'Signing In...' : 'Sign In'}
         </button>

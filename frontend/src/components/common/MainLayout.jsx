@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
 import BottomNav from './BottomNav.jsx';
-import CartConflictModal from '../cart/CartConflictModal.jsx';
+import CartConflictModal from '../../features/cart/components/CartConflictModal.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,14 +19,14 @@ import { initializeSocket } from '../../lib/socket.js';
 
 const MainLayout = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, token } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const themeMode = useSelector((state) => state.theme.mode);
 
-  // Initialize socket & fetch active cart if authenticated
+  // Initialize socket & fetch active cart when authenticated
   useEffect(() => {
-    if (isAuthenticated && token) {
+    if (isAuthenticated) {
       dispatch(fetchCart());
-      const socket = initializeSocket(token);
+      const socket = initializeSocket();
 
       if (socket) {
         socket.on('notification:sync', (data) => {
@@ -50,7 +50,7 @@ const MainLayout = () => {
         });
       }
     }
-  }, [dispatch, isAuthenticated, token]);
+  }, [dispatch, isAuthenticated]);
 
   // Handle global auth:logout custom event
   useEffect(() => {

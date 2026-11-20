@@ -2,8 +2,8 @@ import api from '../../../lib/axios.js';
 
 export const authService = {
   login: (credentials) => api.post('/auth/login', credentials),
-  register: (data, isMultipart = false) =>
-    api.post('/auth/register', data, {
+  register: (userData, isMultipart = false) =>
+    api.post('/auth/register', userData, {
       headers: isMultipart ? { 'Content-Type': 'multipart/form-data' } : {},
     }),
   verifyOtp: (data) => api.post('/auth/verify-otp', data),

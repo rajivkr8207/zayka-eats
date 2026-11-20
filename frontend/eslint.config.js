@@ -27,6 +27,9 @@ export default defineConfig([
         },
       ],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
 ]);

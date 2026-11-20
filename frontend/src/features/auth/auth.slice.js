@@ -7,30 +7,31 @@ import {
   updateUserProfile,
   logoutUser,
 } from './auth.thunk.js';
-import { initializeSocket, disconnectSocket } from '../../lib/socket.js';
+import { disconnectSocket } from '../../lib/socket.js';
+
+const initialState = {
+  user: null,
+  isAuthenticated: false,
+  isInitialized: false,
+  isLoading: false,
+  error: null,
+};
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: storedUser,
-    token: storedToken || null,
-    isAuthenticated: Boolean(storedToken),
-    isLoading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     setCredentials: (state, action) => {
-      const { user, accessToken } = action.payload;
+      const user = action.payload?.user || action.payload;
       state.user = user;
-      state.token = accessToken;
       state.isAuthenticated = true;
+      state.isInitialized = true;
       state.error = null;
-
     },
     clearAuth: (state) => {
       state.user = null;
-      state.token = null;
       state.isAuthenticated = false;
+      state.isInitialized = true;
       state.error = null;
       disconnectSocket();
     },
@@ -50,9 +51,9 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.accessToken;
+        state.user = action.payload?.user || action.payload;
         state.isAuthenticated = true;
+        state.isInitialized = true;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -79,20 +80,34 @@ const authSlice = createSlice({
       })
       .addCase(verifyOtp.fulfilled, (state, action) => {
         state.isLoading = false;
-        if (action.payload?.user) {
-          state.user = action.payload.user;
-          state.token = action.payload.accessToken;
+        const user = action.payload?.user || action.payload;
+        if (user) {
+          state.user = user;
           state.isAuthenticated = true;
         }
+        state.isInitialized = true;
         state.error = null;
       })
       .addCase(verifyOtp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
-      // Profile fetch
+      // Profile fetch (on page load / refresh)
+      .addCase(fetchCurrentUser.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.user = action.payload;
+        state.isAuthenticated = true;
+        state.isInitialized = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentUser.rejected, (state) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.isInitialized = true;
       })
       // Profile update
       .addCase(updateUserProfile.fulfilled, (state, action) => {
@@ -101,8 +116,8 @@ const authSlice = createSlice({
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
-        state.token = null;
         state.isAuthenticated = false;
+        state.isInitialized = true;
         state.error = null;
       });
   },
@@ -110,7 +125,6 @@ const authSlice = createSlice({
 
 export const { setCredentials, clearAuth, clearAuthError, updateUserData } = authSlice.actions;
 
-// Re-export thunks for seamless importing from slice
 export {
   loginUser,
   registerUser,
