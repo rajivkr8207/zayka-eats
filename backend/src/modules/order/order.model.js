@@ -109,14 +109,12 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
     },
 
     restaurant: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Restaurant',
       required: true,
-      index: true,
     },
 
     // Order Items
@@ -188,7 +186,6 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ['pending', 'paid', 'failed', 'refunded', 'partially_refunded'],
       default: 'pending',
-      index: true,
     },
 
     paymentId: {
@@ -206,7 +203,6 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       default: null,
-      index: true,
     },
 
     // Order Status
@@ -223,7 +219,6 @@ const orderSchema = new mongoose.Schema(
         'cancelled',
       ],
       default: 'pending',
-      index: true,
     },
 
     statusHistory: {
@@ -263,11 +258,7 @@ const orderSchema = new mongoose.Schema(
   },
 );
 
-// Query indexes
-orderSchema.index({ user: 1, createdAt: -1 });
-orderSchema.index({ restaurant: 1, createdAt: -1 });
-orderSchema.index({ orderStatus: 1 });
-orderSchema.index({ deliveryPartner: 1, orderStatus: 1 });
+
 
 const Order = mongoose.model('Order', orderSchema);
 
