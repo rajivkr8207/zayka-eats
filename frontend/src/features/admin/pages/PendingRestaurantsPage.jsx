@@ -13,8 +13,12 @@ const PendingRestaurantsPage = () => {
   const fetchPending = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await adminService.getRestaurants({ status: 'pending' });
-      const list = res.data?.data?.restaurants || res.data?.data || [];
+      const res = await adminService.getPendingRestaurants();
+      const list =
+        res.data?.data?.restaurants ||
+        res.data?.data?.Resturants ||
+        res.data?.data ||
+        [];
       setRestaurants(Array.isArray(list) ? list : []);
     } catch {
       toast.error('Failed to load pending restaurants');
@@ -30,7 +34,7 @@ const PendingRestaurantsPage = () => {
   const handleApprove = async (id) => {
     try {
       setIsProcessing(true);
-      await adminService.updateRestaurantStatus(id, 'approved');
+      await adminService.approveRestaurant(id);
       toast.success('Restaurant approved & live! ✅');
       fetchPending();
     } catch (err) {
@@ -40,10 +44,10 @@ const PendingRestaurantsPage = () => {
     }
   };
 
-  const handleReject = async (id, _reason) => {
+  const handleReject = async (id, reason) => {
     try {
       setIsProcessing(true);
-      await adminService.updateRestaurantStatus(id, 'rejected');
+      await adminService.rejectRestaurant(id, reason);
       toast.info('Restaurant rejected');
       fetchPending();
     } catch (err) {

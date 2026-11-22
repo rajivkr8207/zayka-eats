@@ -7,6 +7,9 @@ import {
   updateFoodCategoryController,
   toggleFoodCategoryStatusController,
   deleteFoodCategoryController,
+  addFoodItemController,
+  updateFoodItemController,
+  deleteFoodItemController,
 } from './foodcategory.controller.js';
 import { verifyJWT } from '../../middlewares/auth.middleware.js';
 import { receiveOptionalImage } from '../../middlewares/imageUpload.middleware.js';
@@ -102,5 +105,30 @@ foodCategoryRouter.delete(
   foodCategoryIdParamValidation,
   deleteFoodCategoryController,
 );
+
+// ─────────────────────────────────────────────
+// FOOD ITEM / DISH ROUTES (Protected)
+// ─────────────────────────────────────────────
+
+/**
+ * @route   POST /api/v1/food-categories/:id/items
+ * @desc    Add a dish / food item to this category
+ * @access  Protected (Restaurant Owner or Admin)
+ */
+foodCategoryRouter.post('/:id/items', verifyJWT, addFoodItemController);
+
+/**
+ * @route   PATCH /api/v1/food-categories/:id/items/:itemId
+ * @desc    Update a dish / food item in this category
+ * @access  Protected (Restaurant Owner or Admin)
+ */
+foodCategoryRouter.patch('/:id/items/:itemId', verifyJWT, updateFoodItemController);
+
+/**
+ * @route   DELETE /api/v1/food-categories/:id/items/:itemId
+ * @desc    Delete a dish / food item from this category
+ * @access  Protected (Restaurant Owner or Admin)
+ */
+foodCategoryRouter.delete('/:id/items/:itemId', verifyJWT, deleteFoodItemController);
 
 export default foodCategoryRouter;

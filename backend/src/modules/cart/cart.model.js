@@ -4,7 +4,6 @@ const cartItemSchema = new mongoose.Schema(
   {
     food: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Food',
       required: [true, 'Food reference ID is required'],
     },
 

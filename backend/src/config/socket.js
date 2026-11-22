@@ -1,4 +1,3 @@
-import { clearTimeout, setTimeout } from 'node:timers';
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import Config from './config.js';
@@ -165,17 +164,6 @@ export const initializeSocket = (httpServer) => {
         logger.error('[Socket.IO] notification:mark_all_read error', { error: err.message });
       }
     });
-
-    // Disconnect handling when token expires
-    if (socket.data.tokenExpiresAt) {
-      const expiresIn = Math.max(socket.data.tokenExpiresAt * 1000 - Date.now(), 0);
-      const expiryTimer = setTimeout(() => {
-        socket.emit('auth:expired', { message: 'Session expired' });
-        socket.disconnect(true);
-      }, expiresIn);
-      expiryTimer.unref?.();
-      socket.on('disconnect', () => clearTimeout(expiryTimer));
-    }
 
     socket.on('disconnect', (reason) => {
       logger.info(`[Socket.IO] Client disconnected: user=${userId}, reason=${reason}`);

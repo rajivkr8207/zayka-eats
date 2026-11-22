@@ -8,7 +8,7 @@ const ApprovalCard = ({ item, type, onApprove, onReject, isProcessing }) => {
   const title = type === 'restaurant' ? item.name : item.user?.fullName || item.user?.email || 'Partner';
   const subtitle =
     type === 'restaurant'
-      ? `${item.address?.city || ''} • ${item.cuisineTypes?.join(', ') || ''}`
+      ? `${item.city || item.address?.city || item.address || ''} • ${item.cuisineTypes?.join(', ') || ''}`
       : `Vehicle: ${item.vehicleType?.toUpperCase()} (${item.vehicleNumber || 'Pending'})`;
 
   const handleRejectConfirm = () => {

@@ -14,6 +14,7 @@ import reviewRouter from './modules/review/review.route.js';
 import notificationRouter from './modules/notification/notification.route.js';
 import couponRedemptionRouter from './modules/couponredemption/couponredemption.route.js';
 import activityLogRouter from './modules/activityLog/activityLog.route.js';
+import adminRouter from './modules/admin/admin.route.js';
 import { auditActivity } from './modules/activityLog/activityLog.middleware.js';
 
 const AllRoutes = express.Router();
@@ -23,6 +24,7 @@ AllRoutes.use(auditActivity);
 
 AllRoutes.use('/health', healthRoute);
 AllRoutes.use('/auth', authRouter);
+AllRoutes.use('/admin', adminRouter);
 AllRoutes.use('/restaurants', restaurantRouter);
 AllRoutes.use('/menus', menuRouter);
 AllRoutes.use('/food-categories', foodCategoryRouter);

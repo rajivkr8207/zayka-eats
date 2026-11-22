@@ -86,13 +86,13 @@ const ActivityLogsPage = () => {
                       </span>
                     </td>
                     <td className="py-3 font-semibold text-text-primary">
-                      {log.user?.fullName || log.user?.email || log.userId || 'System'}
+                      {log.actorName || log.actorEmail || log.user?.fullName || log.user?.email || log.userId || 'System'}
                     </td>
-                    <td className="py-3 text-text-secondary">{log.entity || 'General'}</td>
+                    <td className="py-3 text-text-secondary">{log.entityType || log.entity || 'General'}</td>
                     <td className="py-3 text-text-muted truncate max-w-xs">
-                      {typeof log.details === 'object'
+                      {log.message || (typeof log.details === 'object'
                         ? JSON.stringify(log.details)
-                        : log.details || '-'}
+                        : log.details || '-')}
                     </td>
                   </tr>
                 ))}

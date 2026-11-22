@@ -1,5 +1,41 @@
 import mongoose from 'mongoose';
 
+const foodItemSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Dish name is required'],
+      trim: true,
+      minlength: [2, 'Dish name must be at least 2 characters'],
+      maxlength: [120, 'Dish name cannot exceed 120 characters'],
+    },
+    description: {
+      type: String,
+      default: '',
+      trim: true,
+      maxlength: [500, 'Description cannot exceed 500 characters'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'Price is required'],
+      min: [0, 'Price must be positive'],
+    },
+    isVeg: {
+      type: Boolean,
+      default: true,
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+    image: {
+      type: String,
+      default: '',
+    },
+  },
+  { timestamps: true },
+);
+
 const foodCategorySchema = new mongoose.Schema(
   {
     restaurant: {
@@ -40,6 +76,11 @@ const foodCategorySchema = new mongoose.Schema(
     image: {
       type: String,
       default: '',
+    },
+
+    items: {
+      type: [foodItemSchema],
+      default: [],
     },
 
     isActive: {

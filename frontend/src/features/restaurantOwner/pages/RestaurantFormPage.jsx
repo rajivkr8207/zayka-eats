@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { FiArrowLeft, FiMapPin } from 'react-icons/fi';
 import { ownerService } from '../services/owner.service.js';
+import { fetchCurrentUser } from '../../auth/auth.slice.js';
 import { toast } from 'react-toastify';
 
 const DAYS = [
@@ -14,6 +16,7 @@ const DAYS = [
 const RestaurantFormPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isEdit = Boolean(id);
 
   const [isLoading, setIsLoading] = useState(isEdit);
@@ -29,7 +32,6 @@ const RestaurantFormPage = () => {
     handleSubmit,
     reset,
     setValue,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -56,8 +58,6 @@ const RestaurantFormPage = () => {
       logo: '',
     },
   });
-
-  const selectedDays = watch('workingDays') || [];
 
   // Load restaurant for editing
   useEffect(() => {
@@ -169,7 +169,7 @@ const RestaurantFormPage = () => {
           setValue('pincode', addr.postcode || '', { shouldValidate: true });
 
           toast.success('Location and address fetched successfully!');
-        } catch (error) {
+        } catch {
           toast.warning(
             'Coordinates captured, but address lookup failed. Fill address manually.',
           );
@@ -246,6 +246,7 @@ const RestaurantFormPage = () => {
       } else {
         await ownerService.createRestaurant(payload);
         toast.success('Restaurant registered! Submitted for admin approval.');
+        dispatch(fetchCurrentUser());
       }
 
       navigate('/owner/restaurants');

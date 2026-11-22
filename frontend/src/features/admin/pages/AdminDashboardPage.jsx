@@ -13,11 +13,17 @@ const AdminDashboardPage = () => {
 
   useEffect(() => {
     adminService
-      .getActivityStats()
+      .getDashboardStats()
       .then((res) => {
         const data = res.data?.data;
         if (data) {
-          setStats((prev) => ({ ...prev, ...data }));
+          setStats((prev) => ({
+            ...prev,
+            totalUsers: data.totalUsers ?? prev.totalUsers,
+            totalRestaurants: data.totalRestaurants ?? prev.totalRestaurants,
+            totalOrders: data.totalOrders ?? prev.totalOrders,
+            pendingApprovals: data.pendingApprovals ?? prev.pendingApprovals,
+          }));
         }
       })
       .catch(() => {});

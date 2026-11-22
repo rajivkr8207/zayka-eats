@@ -31,27 +31,27 @@ export const getUsers = asyncHandler(async (_req, res) => {
 });
 
 export const getResturants = asyncHandler(async (_req, res) => {
-  const Resturants = await listResturants();
-  return res.status(200).json(new ApiResponse(200, { Resturants }, 'Resturants fetched successfully'));
+  const restaurants = await listResturants();
+  return res.status(200).json(new ApiResponse(200, { restaurants }, 'Restaurants fetched successfully'));
 });
 
 export const getResturantsVerifications = asyncHandler(async (_req, res) => {
-  const Resturants = await listResturantsVerifications();
+  const restaurants = await listResturantsVerifications();
   return res
     .status(200)
-    .json(new ApiResponse(200, { Resturants }, 'Resturant verifications fetched successfully'));
+    .json(new ApiResponse(200, { restaurants }, 'Restaurant verifications fetched successfully'));
 });
 
 export const approveResturant = asyncHandler(async (req, res) => {
-  const Resturant = await reviewResturantVerification(req.params.ResturantId, 'approved');
-  return res.status(200).json(new ApiResponse(200, { Resturant }, 'Resturant approved and activated'));
+  const restaurant = await reviewResturantVerification(req.params.ResturantId, 'approved');
+  return res.status(200).json(new ApiResponse(200, { restaurant }, 'Restaurant approved and activated'));
 });
 
 export const rejectResturant = asyncHandler(async (req, res) => {
-  const Resturant = await rejectResturantVerification(
+  const restaurant = await rejectResturantVerification(
     req.params.ResturantId,
     'rejected',
     req.body.reason,
   );
-  return res.status(200).json(new ApiResponse(200, { Resturant }, 'Resturant application rejected'));
+  return res.status(200).json(new ApiResponse(200, { restaurant }, 'Restaurant application rejected'));
 });

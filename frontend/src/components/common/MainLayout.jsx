@@ -14,7 +14,7 @@ import {
   setUnreadCount,
 } from '../../features/notification/notification.slice.js';
 import { fetchCart } from '../../features/cart/cart.slice.js';
-import { clearAuth } from '../../features/auth/auth.slice.js';
+import { clearAuth, fetchCurrentUser } from '../../features/auth/auth.slice.js';
 import { initializeSocket } from '../../lib/socket.js';
 
 const MainLayout = () => {
@@ -44,9 +44,13 @@ const MainLayout = () => {
           dispatch(setUnreadCount(unreadCount));
         });
 
-        socket.on('auth:expired', () => {
-          toast.error('Session expired. Please log in again.');
-          dispatch(clearAuth());
+        socket.on('auth:expired', async () => {
+          try {
+            await dispatch(fetchCurrentUser()).unwrap();
+          } catch {
+            toast.error('Session expired. Please log in again.');
+            dispatch(clearAuth());
+          }
         });
       }
     }

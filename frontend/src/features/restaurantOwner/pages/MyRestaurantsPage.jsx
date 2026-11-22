@@ -72,10 +72,10 @@ const MyRestaurantsPage = () => {
                 <div>
                   <h3 className="text-lg font-bold text-text-primary">{res.name}</h3>
                   <p className="text-xs text-text-muted mt-0.5">
-                    {res.address?.city || 'City not set'} • {res.cuisineTypes?.join(', ')}
+                    {res.city || res.address?.city || res.address || 'City not set'} • {res.cuisineTypes?.join(', ')}
                   </p>
                 </div>
-                <RestaurantStatusBadge status={res.status} />
+                <RestaurantStatusBadge status={res.approvalStatus || res.status} />
               </div>
 
               {/* Toggle Open/Closed */}

@@ -7,8 +7,10 @@ import Config from './src/config/config.js';
 import { ConnectDB } from './src/config/database.js';
 import logger from './src/config/logger.js';
 import { initializeSocket } from './src/config/socket.js';
+import { seedInitialAdmin } from './src/modules/admin/admin.seed.js';
 
 await ConnectDB();
+await seedInitialAdmin();
 
 const server = http.createServer(app);
 initializeSocket(server);

@@ -264,3 +264,95 @@ export const toggleFoodCategoryStatus = async (categoryId, user, isActive) => {
 
   return category;
 };
+
+// ─────────────────────────────────────────────
+// ADD FOOD ITEM TO CATEGORY
+// ─────────────────────────────────────────────
+export const addFoodItem = async (categoryId, user, itemData) => {
+  const category = await FoodCategory.findById(categoryId);
+  if (!category) {
+    throw new ApiError(404, 'Food category not found');
+  }
+
+  const restaurant = await Restaurant.findById(category.restaurant);
+  const isOwner = restaurant && restaurant.owner.toString() === user._id.toString();
+  const isAdmin = user.role === ROLES.ADMIN;
+  if (!isOwner && !isAdmin) {
+    throw new ApiError(403, 'You are not authorized to add food items to this category');
+  }
+
+  const { name, description, price, isVeg, isAvailable, image } = itemData;
+
+  const newItem = {
+    name: name.trim(),
+    description: description ? description.trim() : '',
+    price: Number(price) || 0,
+    isVeg: isVeg !== undefined ? Boolean(isVeg) : true,
+    isAvailable: isAvailable !== undefined ? Boolean(isAvailable) : true,
+    image: image ? image.trim() : '',
+  };
+
+  category.items.push(newItem);
+  await category.save();
+
+  return category.items[category.items.length - 1];
+};
+
+// ─────────────────────────────────────────────
+// UPDATE FOOD ITEM IN CATEGORY
+// ─────────────────────────────────────────────
+export const updateFoodItem = async (categoryId, itemId, user, itemData) => {
+  const category = await FoodCategory.findById(categoryId);
+  if (!category) {
+    throw new ApiError(404, 'Food category not found');
+  }
+
+  const restaurant = await Restaurant.findById(category.restaurant);
+  const isOwner = restaurant && restaurant.owner.toString() === user._id.toString();
+  const isAdmin = user.role === ROLES.ADMIN;
+  if (!isOwner && !isAdmin) {
+    throw new ApiError(403, 'You are not authorized to update food items in this category');
+  }
+
+  const item = category.items.id(itemId);
+  if (!item) {
+    throw new ApiError(404, 'Food item not found in this category');
+  }
+
+  if (itemData.name !== undefined) item.name = itemData.name.trim();
+  if (itemData.description !== undefined) item.description = itemData.description.trim();
+  if (itemData.price !== undefined) item.price = Number(itemData.price) || 0;
+  if (itemData.isVeg !== undefined) item.isVeg = Boolean(itemData.isVeg);
+  if (itemData.isAvailable !== undefined) item.isAvailable = Boolean(itemData.isAvailable);
+  if (itemData.image !== undefined) item.image = itemData.image.trim();
+
+  await category.save();
+  return item;
+};
+
+// ─────────────────────────────────────────────
+// DELETE FOOD ITEM FROM CATEGORY
+// ─────────────────────────────────────────────
+export const deleteFoodItem = async (categoryId, itemId, user) => {
+  const category = await FoodCategory.findById(categoryId);
+  if (!category) {
+    throw new ApiError(404, 'Food category not found');
+  }
+
+  const restaurant = await Restaurant.findById(category.restaurant);
+  const isOwner = restaurant && restaurant.owner.toString() === user._id.toString();
+  const isAdmin = user.role === ROLES.ADMIN;
+  if (!isOwner && !isAdmin) {
+    throw new ApiError(403, 'You are not authorized to delete food items from this category');
+  }
+
+  const item = category.items.id(itemId);
+  if (!item) {
+    throw new ApiError(404, 'Food item not found in this category');
+  }
+
+  category.items.pull(itemId);
+  await category.save();
+
+  return { message: 'Food item deleted successfully' };
+};

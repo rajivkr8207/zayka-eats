@@ -1,9 +1,21 @@
 import api from '../../../lib/axios.js';
 
 export const adminService = {
-  // Restaurants
-  getRestaurants: (params) => api.get('/restaurants', { params }),
-  updateRestaurantStatus: (id, status) => api.patch(`/restaurants/${id}/status`, { status }),
+  // Dashboard & Stats
+  getDashboardStats: () => api.get('/admin/dashboard/stats'),
+
+  // Restaurants & Approvals
+  getRestaurants: (params) => api.get('/admin/restaurants', { params }),
+  getPendingRestaurants: () => api.get('/admin/restaurant-verifications'),
+  updateRestaurantStatus: (id, status, reason) =>
+    api.patch(`/restaurants/${id}/approval`, { approvalStatus: status, rejectionReason: reason }),
+  approveRestaurant: (id) =>
+    api.patch(`/restaurants/${id}/approval`, { approvalStatus: 'approved' }),
+  rejectRestaurant: (id, reason) =>
+    api.patch(`/restaurants/${id}/approval`, {
+      approvalStatus: 'rejected',
+      rejectionReason: reason,
+    }),
   deleteRestaurant: (id) => api.delete(`/restaurants/${id}`),
 
   // Delivery Partners
