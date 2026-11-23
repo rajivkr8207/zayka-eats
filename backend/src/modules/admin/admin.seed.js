@@ -10,7 +10,7 @@ export const seedInitialAdmin = async () => {
   try {
     const existingAdmin = await User.findOne({ role: ROLES.ADMIN });
     if (existingAdmin) {
-      logger.info(`[Bootstrap] Admin account verified: ${existingAdmin.email} (${existingAdmin.username})`);
+      logger.info(`Admin account verified: ${existingAdmin.email} (${existingAdmin.username})`);
       return;
     }
 

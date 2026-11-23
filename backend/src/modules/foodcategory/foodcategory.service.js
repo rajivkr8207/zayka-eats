@@ -283,6 +283,13 @@ export const addFoodItem = async (categoryId, user, itemData) => {
 
   const { name, description, price, isVeg, isAvailable, image } = itemData;
 
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    throw new ApiError(400, 'Dish name is required');
+  }
+  if (price === undefined || price === null || isNaN(Number(price)) || Number(price) <= 0) {
+    throw new ApiError(400, 'Valid positive price is required');
+  }
+
   const newItem = {
     name: name.trim(),
     description: description ? description.trim() : '',

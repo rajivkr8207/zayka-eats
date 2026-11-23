@@ -5,6 +5,12 @@ import { validate } from '../../config/validate.js';
 // CREATE MENU VALIDATION
 // ─────────────────────────────────────────────
 export const createMenuValidation = [
+  (req, _res, next) => {
+    if (!req.body.restaurantId && req.body.restaurant) {
+      req.body.restaurantId = req.body.restaurant;
+    }
+    next();
+  },
   body('restaurantId')
     .notEmpty()
     .withMessage('Restaurant ID is required')

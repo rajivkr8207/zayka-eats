@@ -111,7 +111,7 @@ const OwnerDashboardPage = () => {
                       {res.cuisineTypes?.join(', ') || 'Multi-cuisine'}
                     </p>
                   </div>
-                  <RestaurantStatusBadge status={res.status} />
+                  <RestaurantStatusBadge status={res.approvalStatus || res.status} />
                 </div>
 
                 <div className="pt-3 border-t border-border-subtle flex flex-wrap gap-2 text-xs">

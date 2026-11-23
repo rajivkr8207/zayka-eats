@@ -13,7 +13,7 @@ import {
 // POST /api/v1/menus (Protected - Owner or Admin)
 // ─────────────────────────────────────────────
 export const createMenuController = asyncHandler(async (req, res) => {
-  const restaurantId = req.body.restaurantId;
+  const restaurantId = req.body.restaurantId || req.body.restaurant;
   const menu = await createMenu({
     user: req.user,
     restaurantId,

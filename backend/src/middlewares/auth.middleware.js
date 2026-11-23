@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import Config from '../config/config.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { getCache, setCache } from '../utils/cache.js';
 
 export const verifyJWT = asyncHandler(async (req, _res, next) => {
   const token = req.cookies?.accessToken
@@ -26,6 +25,8 @@ export const verifyJWT = asyncHandler(async (req, _res, next) => {
     }
     throw new ApiError(401, 'Invalid access token');
   }
+  decoded._id = decoded._id || decoded.id;
+  decoded.id = decoded.id || decoded._id;
   req.user = decoded;
   next();
 });

@@ -17,7 +17,9 @@ export const createMenu = async ({ user, restaurantId, menuData, imageBuffer, im
   }
 
   // Only the restaurant owner or Admin can create menus
-  const isOwner = restaurant.owner.toString() === user._id.toString();
+  const userId = (user?._id || user?.id)?.toString();
+  const restaurantOwnerId = (restaurant?.owner?._id || restaurant?.owner)?.toString();
+  const isOwner = Boolean(restaurantOwnerId && userId && restaurantOwnerId === userId);
   const isAdmin = user.role === ROLES.ADMIN;
   if (!isOwner && !isAdmin) {
     throw new ApiError(403, 'You are not authorized to add a menu to this restaurant');
@@ -114,7 +116,9 @@ export const updateMenu = async ({ menuId, user, updateData, imageBuffer, imageM
     throw new ApiError(404, 'Restaurant associated with this menu not found');
   }
 
-  const isOwner = restaurant.owner.toString() === user._id.toString();
+  const userId = (user?._id || user?.id)?.toString();
+  const restaurantOwnerId = (restaurant?.owner?._id || restaurant?.owner)?.toString();
+  const isOwner = Boolean(restaurantOwnerId && userId && restaurantOwnerId === userId);
   const isAdmin = user.role === ROLES.ADMIN;
   if (!isOwner && !isAdmin) {
     throw new ApiError(403, 'You are not authorized to update this menu');

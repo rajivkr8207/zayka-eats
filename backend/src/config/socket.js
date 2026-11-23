@@ -4,7 +4,7 @@ import Config from './config.js';
 import logger from './logger.js';
 import User from '../modules/user/user.model.js';
 import Notification from '../modules/notification/notification.model.js';
-import { getCache } from '../utils/cache.js';
+// import { getCache } from '../utils/cache.js';
 
 let socketServer = null;
 
@@ -56,10 +56,10 @@ const authenticateSocket = async (socket, next) => {
   }
 
   try {
-    const isBlacklisted = await getCache(`blacklist:token:${token}`);
-    if (isBlacklisted) {
-      return next(new Error('Access token has been revoked'));
-    }
+    // const isBlacklisted = await getCache(`blacklist:token:${token}`);
+    // if (isBlacklisted) {
+    //   return next(new Error('Access token has been revoked'));
+    // }
 
     const user = await User.findById(decoded.id)
       .select('_id isActive isBlocked role fullName email')

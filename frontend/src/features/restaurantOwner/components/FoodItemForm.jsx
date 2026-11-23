@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 const FoodItemForm = ({ initialData, onSubmit, onCancel, isLoading }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -16,10 +18,21 @@ const FoodItemForm = ({ initialData, onSubmit, onCancel, isLoading }) => {
     },
   });
 
+  useEffect(() => {
+    reset({
+      name: initialData?.name || '',
+      description: initialData?.description || '',
+      price: initialData?.price || '',
+      isVeg: initialData?.isVeg ?? true,
+      isAvailable: initialData?.isAvailable ?? true,
+      image: initialData?.image || '',
+    });
+  }, [initialData, reset]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-text-secondary">Dish Name</label>
+        <label className="text-xs font-semibold text-text-secondary">Dish Name *</label>
         <input
           type="text"
           placeholder="e.g. Butter Chicken"
@@ -31,7 +44,7 @@ const FoodItemForm = ({ initialData, onSubmit, onCancel, isLoading }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-text-secondary">Price (₹)</label>
+          <label className="text-xs font-semibold text-text-secondary">Price (₹) *</label>
           <input
             type="number"
             placeholder="250"
@@ -87,7 +100,7 @@ const FoodItemForm = ({ initialData, onSubmit, onCancel, isLoading }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-xl bg-surface-elevated text-text-muted hover:text-text-primary text-xs font-bold"
+            className="px-4 py-2 rounded-xl bg-surface-elevated text-text-muted hover:text-text-primary text-xs font-bold cursor-pointer"
           >
             Cancel
           </button>
@@ -95,9 +108,9 @@ const FoodItemForm = ({ initialData, onSubmit, onCancel, isLoading }) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="px-5 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md transition-all disabled:opacity-50"
+          className="px-5 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md transition-all disabled:opacity-50 cursor-pointer"
         >
-          {isLoading ? 'Saving...' : 'Save Dish'}
+          {isLoading ? 'Saving...' : initialData ? 'Update Dish' : 'Save Dish'}
         </button>
       </div>
     </form>

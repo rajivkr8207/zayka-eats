@@ -47,7 +47,7 @@ export const getRestaurantsController = asyncHandler(async (req, res) => {
 // GET /api/v1/restaurants/my-restaurants (Protected)
 // ─────────────────────────────────────────────
 export const getMyRestaurantsController = asyncHandler(async (req, res) => {
-  const restaurants = await getMyRestaurants(req.user._id);
+  const restaurants = await getMyRestaurants(req.user.id);
   return res
     .status(200)
     .json(new ApiResponse(200, { restaurants }, 'My restaurants fetched successfully'));

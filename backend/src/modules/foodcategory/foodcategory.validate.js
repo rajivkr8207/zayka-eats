@@ -5,6 +5,15 @@ import { validate } from '../../config/validate.js';
 // CREATE FOOD CATEGORY VALIDATION
 // ─────────────────────────────────────────────
 export const createFoodCategoryValidation = [
+  (req, _res, next) => {
+    if (!req.body.restaurantId && req.body.restaurant) {
+      req.body.restaurantId = req.body.restaurant;
+    }
+    if (!req.body.menuId && req.body.menu) {
+      req.body.menuId = req.body.menu;
+    }
+    next();
+  },
   body('restaurantId')
     .notEmpty()
     .withMessage('Restaurant ID is required')
