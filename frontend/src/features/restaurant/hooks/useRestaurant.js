@@ -53,7 +53,7 @@ export const useRestaurantDetail = (idOrSlug) => {
             restaurantService.getMenusByRestaurant(resId),
             restaurantService.getCategoriesByRestaurant(resId),
           ]);
-          setMenus(menusRes.data?.data?.menus || menusRes.data?.data || []);
+          setMenus(menusRes || []);
           setCategories(catsRes.data?.data?.categories || catsRes.data?.data || []);
         } catch {
           // If menu/category sub-fetch fails, continue with restaurant details

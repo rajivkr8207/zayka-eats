@@ -11,8 +11,8 @@ const RiderDashboardPage = () => {
   const { profile, isOnline, isLoading, toggleDuty, refetch } = useDelivery();
   const [activeTask, setActiveTask] = useState(null);
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
-
-  const isVerified = profile?.verificationStatus === 'verified' || profile?.isVerified;
+  console.log(profile);
+  const isVerified = profile?.deliveryPartner?.verificationStatus === 'approved';
 
   const handleAcceptTask = async (taskId) => {
     try {

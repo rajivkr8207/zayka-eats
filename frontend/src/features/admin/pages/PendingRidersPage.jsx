@@ -30,7 +30,7 @@ const PendingRidersPage = () => {
   const handleApprove = async (id) => {
     try {
       setIsProcessing(true);
-      await adminService.verifyPartner(id, { isVerified: true, status: 'approved' });
+      await adminService.verifyPartner(id, { isVerified: true, verificationStatus: 'approved' });
       toast.success('Delivery Partner verified and ready for duty! 🛵');
       fetchPendingRiders();
     } catch (err) {

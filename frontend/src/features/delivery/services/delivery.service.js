@@ -1,8 +1,8 @@
 import api from '../../../lib/axios.js';
 
 export const deliveryService = {
-  onboard: (data) => api.post('/delivery/onboard', data),
-  getProfile: () => api.get('/delivery/profile'),
+  onboard: (data) => api.post('/delivery/register', data),
+  getProfile: () => api.get('/delivery/profile/me'),
   updateProfile: (data) => api.patch('/delivery/profile', data),
   toggleOnline: (isOnline) => api.patch('/delivery/status/online', { isOnline }),
   updateLocation: (latitude, longitude) =>

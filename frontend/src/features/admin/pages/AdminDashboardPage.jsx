@@ -5,10 +5,10 @@ import { adminService } from '../services/admin.service.js';
 
 const AdminDashboardPage = () => {
   const [stats, setStats] = useState({
-    totalUsers: 142,
-    totalRestaurants: 28,
-    totalOrders: 384,
-    pendingApprovals: 5,
+    totalUsers: 0,
+    totalRestaurants: 0,
+    totalOrders: 0,
+    pendingApprovals: 0,
   });
 
   useEffect(() => {
