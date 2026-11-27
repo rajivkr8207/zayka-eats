@@ -98,6 +98,15 @@ export const orderIdParamValidation = [
 // ADMIN APPLICATION REVIEW VALIDATION
 // ─────────────────────────────────────────────
 export const reviewApplicationValidation = [
+  (req, _res, next) => {
+    if (!req.body.verificationStatus && req.body.status) {
+      req.body.verificationStatus = req.body.status;
+    }
+    if (!req.body.rejectionReason && req.body.reason) {
+      req.body.rejectionReason = req.body.reason;
+    }
+    next();
+  },
   param('id').isMongoId().withMessage('Valid delivery partner ID is required in URL parameter'),
 
   body('verificationStatus')

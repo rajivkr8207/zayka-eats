@@ -30,8 +30,9 @@ const CheckoutPage = () => {
       setIsPlacingOrder(true);
 
       const orderPayload = {
+        addressId: activeAddressId,
         deliveryAddressId: activeAddressId,
-        paymentMethod: paymentMethod === 'cod' ? 'cash_on_delivery' : 'online',
+        paymentMethod: paymentMethod === 'cod' ? 'cod' : 'online',
       };
 
       const res = await orderService.createOrder(orderPayload);
@@ -149,7 +150,7 @@ const CheckoutPage = () => {
                         </div>
                         <p className="text-xs text-text-secondary mt-1">{addr.addressLine1}</p>
                         <p className="text-[11px] text-text-muted">
-                          {addr.city}, {addr.state} - {addr.pinCode}
+                          {addr.city}, {addr.state} - {addr.pincode || addr.pinCode}
                         </p>
                       </div>
 

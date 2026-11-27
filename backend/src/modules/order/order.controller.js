@@ -73,7 +73,7 @@ export const updateOrderStatusController = asyncHandler(async (req, res) => {
   const order = await updateOrderStatus({
     orderId: req.params.id,
     user: req.user,
-    newStatus: req.body.newStatus,
+    newStatus: req.body.newStatus || req.body.status,
     note: req.body.note,
   });
 

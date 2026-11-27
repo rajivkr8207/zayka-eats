@@ -12,6 +12,8 @@ import {
   completeDeliveryTask,
   reviewDeliveryPartnerApplication,
   listDeliveryPartners,
+  getActiveDeliveryTask,
+  getAvailableDeliveryTasks,
 } from './delivery.service.js';
 
 // ─────────────────────────────────────────────
@@ -179,4 +181,24 @@ export const listPartnersController = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, result, 'Delivery partners fetched successfully'));
+});
+
+// ─────────────────────────────────────────────
+// GET /api/v1/delivery/tasks/active (Protected - Delivery Partner)
+// ─────────────────────────────────────────────
+export const getActiveTaskController = asyncHandler(async (req, res) => {
+  const result = await getActiveDeliveryTask(req.user);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Active delivery task fetched successfully'));
+});
+
+// ─────────────────────────────────────────────
+// GET /api/v1/delivery/tasks/available (Protected - Delivery Partner)
+// ─────────────────────────────────────────────
+export const getAvailableTasksController = asyncHandler(async (req, res) => {
+  const result = await getAvailableDeliveryTasks(req.user);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Available delivery tasks fetched successfully'));
 });

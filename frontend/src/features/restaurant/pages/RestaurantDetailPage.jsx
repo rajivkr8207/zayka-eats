@@ -81,6 +81,7 @@ const RestaurantDetailPage = () => {
   const handleAddToCart = (item) => {
     addItem({
       restaurantId: _id,
+      foodId: item._id,
       itemId: item._id,
       name: item.name,
       price: item.price,

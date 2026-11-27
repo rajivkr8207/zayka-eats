@@ -3,6 +3,7 @@ import Cart from '../cart/cart.model.js';
 import Restaurant from '../Restaurant/Restaurant.model.js';
 import Address from '../adress/adress.model.js';
 import User from '../user/user.model.js';
+import DeliveryPartner from '../delivery/delivery.model.js';
 import { recordCouponUsage } from '../coupon/coupon.service.js';
 import {
   recordRedemption,
@@ -263,7 +264,8 @@ export const getRestaurantOrders = async (restaurantId, user, queryParams = {}) 
     throw new ApiError(404, 'Restaurant not found');
   }
 
-  const isOwner = restaurant.owner.toString() === user._id.toString();
+  const userIdStr = (user?._id || user?.id)?.toString();
+  const isOwner = (restaurant.owner?._id || restaurant.owner)?.toString() === userIdStr;
   const isAdmin = user.role === ROLES.ADMIN;
   if (!isOwner && !isAdmin) {
     throw new ApiError(403, 'You are not authorized to view orders for this restaurant');
@@ -313,11 +315,12 @@ export const getOrderById = async (orderId, user) => {
   }
 
   // Check permission: Customer, Restaurant Owner, Delivery Partner, or Admin
-  const isCustomer = order.user._id.toString() === user._id.toString();
+  const userIdStr = (user?._id || user?.id)?.toString();
+  const isCustomer = (order.user?._id || order.user)?.toString() === userIdStr;
   const isRestaurantOwner =
-    order.restaurant && order.restaurant.owner?.toString() === user._id.toString();
+    order.restaurant && (order.restaurant.owner?._id || order.restaurant.owner)?.toString() === userIdStr;
   const isRider =
-    order.deliveryPartner && order.deliveryPartner._id.toString() === user._id.toString();
+    order.deliveryPartner && (order.deliveryPartner?._id || order.deliveryPartner)?.toString() === userIdStr;
   const isAdmin = user.role === ROLES.ADMIN;
 
   if (!isCustomer && !isRestaurantOwner && !isRider && !isAdmin) {
@@ -337,20 +340,21 @@ export const updateOrderStatus = async ({ orderId, user, newStatus, note = '' })
   }
 
   const restaurant = await Restaurant.findById(order.restaurant).select('owner');
-  const isRestaurantOwner = restaurant && restaurant.owner.toString() === user._id.toString();
-  const isRider = order.deliveryPartner && order.deliveryPartner.toString() === user._id.toString();
+  const userIdStr = (user?._id || user?.id)?.toString();
+  const isRestaurantOwner = restaurant && (restaurant.owner?._id || restaurant.owner)?.toString() === userIdStr;
+  const isRider = order.deliveryPartner && (order.deliveryPartner?._id || order.deliveryPartner)?.toString() === userIdStr;
   const isAdmin = user.role === ROLES.ADMIN;
 
   // Validate state machine permissions
-  if (['preparing', 'ready_for_pickup'].includes(newStatus)) {
+  if (['confirmed', 'preparing', 'ready_for_pickup'].includes(newStatus)) {
     if (!isRestaurantOwner && !isAdmin) {
       throw new ApiError(403, 'Only the restaurant owner or admin can update kitchen status');
     }
   } else if (['picked_up', 'out_for_delivery', 'delivered'].includes(newStatus)) {
-    if (!isRider && !isAdmin) {
+    if (!isRider && !isRestaurantOwner && !isAdmin) {
       throw new ApiError(
         403,
-        'Only the assigned delivery partner or admin can update delivery status',
+        'Only the assigned delivery partner, restaurant owner, or admin can update delivery status',
       );
     }
   } else if (!isAdmin) {
@@ -440,7 +444,8 @@ export const assignDeliveryPartner = async ({ orderId, user, riderId }) => {
   }
 
   const restaurant = await Restaurant.findById(order.restaurant).select('owner');
-  const isRestaurantOwner = restaurant && restaurant.owner.toString() === user._id.toString();
+  const userIdStr = (user?._id || user?.id)?.toString();
+  const isRestaurantOwner = restaurant && (restaurant.owner?._id || restaurant.owner)?.toString() === userIdStr;
   const isAdmin = user.role === ROLES.ADMIN;
 
   if (!isRestaurantOwner && !isAdmin) {
@@ -456,11 +461,18 @@ export const assignDeliveryPartner = async ({ orderId, user, riderId }) => {
   order.statusHistory.push({
     status: order.orderStatus,
     note: `Delivery partner ${rider.fullName} (${rider.mobile || ''}) assigned to order`,
-    updatedBy: user._id,
+    updatedBy: user._id || user.id,
     changedAt: new Date(),
   });
 
   await order.save();
+
+  // Also sync DeliveryPartner collection so rider's duty reflects ongoing order
+  await DeliveryPartner.findOneAndUpdate(
+    { user: rider._id },
+    { $set: { currentOrder: order._id, isAvailable: false, status: 'on_delivery' } },
+  );
+
   return order.populate('deliveryPartner', 'fullName mobile');
 };
 
@@ -480,9 +492,10 @@ export const cancelOrder = async ({ orderId, user, reason = '' }) => {
     throw new ApiError(400, 'Order is already cancelled');
   }
 
-  const isCustomer = order.user.toString() === user._id.toString();
+  const userIdStr = (user?._id || user?.id)?.toString();
+  const isCustomer = (order.user?._id || order.user)?.toString() === userIdStr;
   const restaurant = await Restaurant.findById(order.restaurant).select('owner');
-  const isRestaurantOwner = restaurant && restaurant.owner.toString() === user._id.toString();
+  const isRestaurantOwner = restaurant && (restaurant.owner?._id || restaurant.owner)?.toString() === userIdStr;
   const isAdmin = user.role === ROLES.ADMIN;
 
   if (!isCustomer && !isRestaurantOwner && !isAdmin) {

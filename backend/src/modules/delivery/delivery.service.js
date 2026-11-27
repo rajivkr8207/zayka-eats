@@ -476,7 +476,13 @@ export const listDeliveryPartners = async (queryParams = {}) => {
 
   const filter = {};
   if (status) filter.status = status;
-  if (verificationStatus) filter.verificationStatus = verificationStatus;
+  if (verificationStatus) {
+    filter.verificationStatus = verificationStatus;
+  } else if (queryParams.isVerified === false || queryParams.isVerified === 'false') {
+    filter.verificationStatus = 'pending';
+  } else if (queryParams.isVerified === true || queryParams.isVerified === 'true') {
+    filter.verificationStatus = 'approved';
+  }
   if (vehicleType) filter.vehicleType = vehicleType;
 
   const [partners, total] = await Promise.all([
@@ -496,4 +502,52 @@ export const listDeliveryPartners = async (queryParams = {}) => {
     limit: limitNum,
     totalPages: Math.ceil(total / limitNum),
   };
+};
+
+// ─────────────────────────────────────────────
+// GET ACTIVE DELIVERY TASK FOR LOGGED-IN RIDER
+// ─────────────────────────────────────────────
+export const getActiveDeliveryTask = async (user) => {
+  const userId = user?._id || user?.id;
+  const partner = await DeliveryPartner.findOne({ user: userId });
+  if (!partner) {
+    throw new ApiError(404, 'Delivery partner profile not found');
+  }
+
+  const order = await Order.findOne({
+    deliveryPartner: userId,
+    orderStatus: { $nin: ['delivered', 'cancelled'] },
+  })
+    .populate('restaurant', 'name slug logo address city phone')
+    .populate('user', 'fullName mobile email')
+    .lean();
+
+  return { activeTask: order, partner };
+};
+
+// ─────────────────────────────────────────────
+// GET AVAILABLE DELIVERY TASKS FOR ONLINE RIDERS
+// ─────────────────────────────────────────────
+export const getAvailableDeliveryTasks = async (user) => {
+  const userId = user?._id || user?.id;
+  const partner = await DeliveryPartner.findOne({ user: userId });
+  if (!partner) {
+    throw new ApiError(404, 'Delivery partner profile not found');
+  }
+
+  if (partner.verificationStatus !== 'approved') {
+    return { availableTasks: [] };
+  }
+
+  const orders = await Order.find({
+    deliveryPartner: null,
+    orderStatus: { $in: ['confirmed', 'preparing', 'ready_for_pickup'] },
+  })
+    .sort({ createdAt: -1 })
+    .limit(20)
+    .populate('restaurant', 'name slug logo address city phone')
+    .populate('user', 'fullName mobile email')
+    .lean();
+
+  return { availableTasks: orders };
 };

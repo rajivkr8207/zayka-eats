@@ -36,6 +36,7 @@ const PendingRestaurantsPage = () => {
       setIsProcessing(true);
       await adminService.approveRestaurant(id);
       toast.success('Restaurant approved & live! ✅');
+      setRestaurants((prev) => prev.filter((r) => r._id !== id));
       fetchPending();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to approve');
@@ -49,6 +50,7 @@ const PendingRestaurantsPage = () => {
       setIsProcessing(true);
       await adminService.rejectRestaurant(id, reason);
       toast.info('Restaurant rejected');
+      setRestaurants((prev) => prev.filter((r) => r._id !== id));
       fetchPending();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to reject');

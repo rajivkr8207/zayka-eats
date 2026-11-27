@@ -41,8 +41,9 @@ const IncomingOrdersPage = () => {
 
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      await ownerService.updateOrderStatus(orderId, { status: newStatus });
-      toast.success(`Order status updated to ${newStatus}`);
+      // backend expects newStatus in body
+      await ownerService.updateOrderStatus(orderId, { newStatus, status: newStatus });
+      toast.success(`Order updated: ${newStatus.replace(/_/g, ' ')} ✅`);
       fetchOrders();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update order status');
@@ -51,7 +52,8 @@ const IncomingOrdersPage = () => {
 
   const filteredOrders = orders.filter((o) => {
     if (activeFilter === 'all') return true;
-    return o.status?.toLowerCase() === activeFilter.toLowerCase();
+    const s = (o.orderStatus || o.status || '').toLowerCase();
+    return s === activeFilter.toLowerCase();
   });
 
   return (

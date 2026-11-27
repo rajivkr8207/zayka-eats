@@ -13,7 +13,7 @@ const PendingRidersPage = () => {
   const fetchPendingRiders = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await adminService.getPartners({ isVerified: false });
+      const res = await adminService.getPartners({ verificationStatus: 'pending' });
       const list = res.data?.data?.partners || res.data?.data || [];
       setRiders(Array.isArray(list) ? list : []);
     } catch {
@@ -32,6 +32,7 @@ const PendingRidersPage = () => {
       setIsProcessing(true);
       await adminService.verifyPartner(id, { isVerified: true, verificationStatus: 'approved' });
       toast.success('Delivery Partner verified and ready for duty! 🛵');
+      setRiders((prev) => prev.filter((r) => r._id !== id));
       fetchPendingRiders();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Approval failed');
@@ -43,8 +44,9 @@ const PendingRidersPage = () => {
   const handleReject = async (id, reason) => {
     try {
       setIsProcessing(true);
-      await adminService.verifyPartner(id, { isVerified: false, status: 'rejected', reason });
+      await adminService.verifyPartner(id, { isVerified: false, verificationStatus: 'rejected', reason });
       toast.info('Delivery Partner application rejected');
+      setRiders((prev) => prev.filter((r) => r._id !== id));
       fetchPendingRiders();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Rejection failed');

@@ -3,13 +3,15 @@ import { FiHome, FiBriefcase, FiMapPin, FiCheckCircle, FiTrash2, FiEdit2 } from 
 const AddressCard = ({ address, onEdit, onDelete, onSetDefault }) => {
   if (!address) return null;
 
-  const { _id, label = 'HOME', addressLine1, city, state, pinCode, landmark, isDefault } = address;
+  const { _id, label, addressType, addressLine1, city, state, pinCode, pincode, landmark, isDefault, fullName } = address;
+  const displayLabel = (label || addressType || 'HOME').toUpperCase();
 
   const getIcon = () => {
-    switch (label?.toUpperCase()) {
+    switch (displayLabel) {
       case 'HOME':
         return <FiHome className="w-4 h-4 text-brand" />;
       case 'WORK':
+      case 'OFFICE':
         return <FiBriefcase className="w-4 h-4 text-brand" />;
       default:
         return <FiMapPin className="w-4 h-4 text-brand" />;
@@ -30,7 +32,7 @@ const AddressCard = ({ address, onEdit, onDelete, onSetDefault }) => {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-text-primary">
-                {label}
+                {displayLabel}
               </span>
               {isDefault && (
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand/10 text-brand border border-brand/20">
@@ -43,7 +45,7 @@ const AddressCard = ({ address, onEdit, onDelete, onSetDefault }) => {
               {landmark ? `, Near ${landmark}` : ''}
             </p>
             <p className="text-[11px] text-text-muted">
-              {city}, {state} - {pinCode}
+              {city}, {state} - {pincode || pinCode}
             </p>
           </div>
         </div>

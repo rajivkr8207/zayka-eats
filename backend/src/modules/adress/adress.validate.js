@@ -32,6 +32,19 @@ export const reverseGeocodeValidation = [
 // CREATE ADDRESS VALIDATION
 // ─────────────────────────────────────────────
 export const createAddressValidation = [
+  // ── Alias middleware: normalise frontend field names → backend names
+  (req, res, next) => {
+    const b = req.body;
+    // pinCode → pincode
+    if (!b.pincode && b.pinCode) b.pincode = b.pinCode;
+    // label → addressType, normalise to lowercase
+    if (!b.addressType && b.label) b.addressType = b.label;
+    if (b.addressType) b.addressType = b.addressType.toLowerCase();
+    // HOME/WORK → home/office/other mapping
+    if (b.addressType === 'work') b.addressType = 'office';
+    if (!['home', 'office', 'other'].includes(b.addressType)) b.addressType = 'home';
+    next();
+  },
   body('fullName')
     .optional()
     .trim()
@@ -95,6 +108,16 @@ export const createAddressValidation = [
 // ─────────────────────────────────────────────
 export const updateAddressValidation = [
   param('id').isMongoId().withMessage('Valid address ID is required in URL parameter'),
+
+  // Alias middleware for update too
+  (req, res, next) => {
+    const b = req.body;
+    if (!b.pincode && b.pinCode) b.pincode = b.pinCode;
+    if (!b.addressType && b.label) b.addressType = b.label;
+    if (b.addressType) b.addressType = b.addressType.toLowerCase();
+    if (b.addressType === 'work') b.addressType = 'office';
+    next();
+  },
 
   body('fullName')
     .optional()

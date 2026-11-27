@@ -263,8 +263,11 @@ export const updateAddress = async ({ addressId, userId, updateData }) => {
   if (updateData.city) updates.city = updateData.city.trim();
   if (updateData.state) updates.state = updateData.state.trim();
   if (updateData.country) updates.country = updateData.country.trim();
-  if (updateData.pincode) updates.pincode = updateData.pincode.trim();
-  if (updateData.addressType) updates.addressType = updateData.addressType;
+  if (updateData.pincode || updateData.pinCode) updates.pincode = (updateData.pincode || updateData.pinCode).trim();
+  if (updateData.addressType || updateData.label) {
+    const raw = (updateData.addressType || updateData.label || '').toLowerCase();
+    updates.addressType = raw === 'work' ? 'office' : (['home', 'office', 'other'].includes(raw) ? raw : 'home');
+  }
 
   // Handle coordinates update
   const lat =

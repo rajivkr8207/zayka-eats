@@ -16,6 +16,15 @@ const ORDER_STATUS_ENUM = [
 // CREATE ORDER VALIDATION
 // ─────────────────────────────────────────────
 export const createOrderValidation = [
+  (req, res, next) => {
+    if (!req.body.addressId && req.body.deliveryAddressId) {
+      req.body.addressId = req.body.deliveryAddressId;
+    }
+    if (req.body.paymentMethod === 'cash_on_delivery') {
+      req.body.paymentMethod = 'cod';
+    }
+    next();
+  },
   body('addressId')
     .optional({ checkFalsy: true })
     .isMongoId()
@@ -24,7 +33,7 @@ export const createOrderValidation = [
   body('paymentMethod')
     .notEmpty()
     .withMessage('Payment method is required')
-    .isIn(['cod', 'online'])
+    .isIn(['cod', 'online', 'cash_on_delivery'])
     .withMessage("Payment method must be 'cod' or 'online'"),
 
   body('customerNote')
@@ -84,6 +93,12 @@ export const restaurantOrdersQueryValidation = [
 // UPDATE STATUS VALIDATION
 // ─────────────────────────────────────────────
 export const updateStatusValidation = [
+  (req, res, next) => {
+    if (!req.body.newStatus && req.body.status) {
+      req.body.newStatus = req.body.status;
+    }
+    next();
+  },
   param('id').isMongoId().withMessage('Valid order ID is required in URL parameter'),
 
   body('newStatus')

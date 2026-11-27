@@ -9,6 +9,8 @@ import {
   findNearbyRidersController,
   acceptDeliveryTaskController,
   completeDeliveryTaskController,
+  getActiveTaskController,
+  getAvailableTasksController,
   reviewApplicationController,
   listPartnersController,
 } from './delivery.controller.js';
@@ -109,6 +111,30 @@ deliveryRouter.get(
 // ─────────────────────────────────────────────
 // ORDER DELIVERY TASKS
 // ─────────────────────────────────────────────
+
+/**
+ * @route   GET /api/v1/delivery/tasks/active
+ * @desc    Get ongoing delivery task for logged in rider
+ * @access  Protected (Delivery Partner)
+ */
+deliveryRouter.get(
+  '/tasks/active',
+  verifyJWT,
+  authorizeRoles(ROLES.DELIVERY_PARTNER, ROLES.ADMIN),
+  getActiveTaskController,
+);
+
+/**
+ * @route   GET /api/v1/delivery/tasks/available
+ * @desc    Get available orders ready for delivery pickup
+ * @access  Protected (Delivery Partner)
+ */
+deliveryRouter.get(
+  '/tasks/available',
+  verifyJWT,
+  authorizeRoles(ROLES.DELIVERY_PARTNER, ROLES.ADMIN),
+  getAvailableTasksController,
+);
 
 /**
  * @route   POST /api/v1/delivery/tasks/:orderId/accept

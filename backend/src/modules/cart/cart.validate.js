@@ -5,6 +5,15 @@ import { validate } from '../../config/validate.js';
 // ADD ITEM VALIDATION
 // ─────────────────────────────────────────────
 export const addItemValidation = [
+  (req, res, next) => {
+    if (!req.body.foodId && req.body.itemId) {
+      req.body.foodId = req.body.itemId;
+    }
+    if (!req.body.restaurantId && req.body.restaurant) {
+      req.body.restaurantId = req.body.restaurant;
+    }
+    next();
+  },
   body('restaurantId')
     .notEmpty()
     .withMessage('Restaurant ID is required')
@@ -69,6 +78,12 @@ export const itemIdParamValidation = [
 // APPLY COUPON VALIDATION
 // ─────────────────────────────────────────────
 export const applyCouponValidation = [
+  (req, res, next) => {
+    if (!req.body.couponCode && req.body.code) {
+      req.body.couponCode = req.body.code;
+    }
+    next();
+  },
   body('couponCode')
     .trim()
     .notEmpty()
